@@ -1,8 +1,8 @@
-# UI changes
+# UI changes — v11
 
-- Mobile header now keeps the Sun and Moon icons visible around the light/dark theme switch.
-- The theme switch remains available on desktop and mobile and persists with localStorage.
-- Added the supplied YouTube channel URL to the homepage's “View on YouTube” link:
-  https://youtube.com/@impressionphotography9904?si=JL8Xxrtb6aafGLvo
-- Instagram homepage content remains Reel-only. Instagram admin video links are now validated as `/reel/...` URLs only.
-- The Instagram profile URL supplied by the user was identical to the YouTube URL, so it was not used as an Instagram URL. The homepage currently falls back to `https://www.instagram.com/` until the actual Instagram profile URL is supplied.
+- Rebuilt the homepage responsive navigation to match the supplied concept: desktop nav plus a mobile hamburger menu containing Home, About, Services, Projects and Contact.
+- Changed work-card media to a 16:9 presentation so desktop images are less aggressively cropped.
+- Reworked Instagram + YouTube sections to match the concept: branded header, View link, six-image thumbnail strip, play indicators, arrows and swipe support.
+- Added local visual fallback thumbnails so the social sections are visible immediately even before social video records are added in Admin. Real approved YouTube/Instagram records replace these automatically.
+- Reworked the footer to match the concept with brand, navigation, Instagram, YouTube and WhatsApp icons, plus the bottom copyright line.
+- Preserved the existing no-price homepage/admin behavior and existing Cloudflare Worker + D1 architecture.
