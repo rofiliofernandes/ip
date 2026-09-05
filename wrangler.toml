@@ -1,6 +1,6 @@
-name = "impression-photography"
+name = "ip"
 main = "src/worker.ts"
-compatibility_date = "2026-09-01"
+compatibility_date = "2026-09-05"
 workers_dev = true
 
 [assets]
@@ -10,12 +10,9 @@ not_found_handling = "single-page-application"
 [[d1_databases]]
 binding = "DB"
 database_name = "impression-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "526c9f75-5ef1-4df7-8bd2-38ca67fbce65"
 migrations_dir = "migrations"
 
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "impression-media"
 
 [vars]
 SITE_NAME = "Impression Photography"

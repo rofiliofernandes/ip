@@ -1,6 +1,6 @@
 # Impression Photography — Cloudflare Edition
 
-Cloudflare-first photography site with D1 + R2, private admin, 2 GiB application storage quota, visitor analytics, Instagram/photo curation, and a non-AI image quality algorithm.
+Cloudflare-first photography site with D1, optional R2 storage, private admin, 2 GiB application storage quota when storage is enabled, visitor analytics, Instagram/photo curation, and a non-AI image quality algorithm.
 
 ## Public archive
 
@@ -50,7 +50,7 @@ Each published photo can be assigned a year and category from the admin panel.
 
 1. Install Node.js.
 2. `npm install`
-3. Create D1 database and R2 bucket.
+3. Create the D1 database. Add the R2 bucket later when storage is activated.
 4. Update `wrangler.toml` bindings.
 5. Set secrets/vars described in `.dev.vars.example`.
 6. Run `npm run db:migrate`.
