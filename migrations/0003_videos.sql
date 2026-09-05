@@ -1,0 +1,6 @@
+ALTER TABLE videos ADD COLUMN platform TEXT NOT NULL DEFAULT 'vimeo';
+ALTER TABLE videos ADD COLUMN source_url TEXT DEFAULT '';
+ALTER TABLE videos ADD COLUMN video_id TEXT DEFAULT '';
+ALTER TABLE videos ADD COLUMN year INTEGER NOT NULL DEFAULT 2025;
+ALTER TABLE videos ADD COLUMN category TEXT NOT NULL DEFAULT 'Other';
+CREATE INDEX IF NOT EXISTS idx_videos_year_category ON videos(year, category);
