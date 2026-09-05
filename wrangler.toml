@@ -10,7 +10,7 @@ not_found_handling = "single-page-application"
 [[d1_databases]]
 binding = "DB"
 database_name = "impression-db"
-database_id = "526c9f75-5ef1-4df7-8bd2-38ca67fbce65"
+database_id = "526c9f75-5ef1-4df7-8bd2-38ca67fbc6e5"
 migrations_dir = "migrations"
 
 
