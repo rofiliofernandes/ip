@@ -39,3 +39,76 @@ html[data-theme="dark"] .archive{background:#0b1014;color:#f5f7f8}html[data-them
   .siteHeader .nav{height:64px}.desktopNav{display:none!important}.mobileMenuBtn{display:flex}.mobileMenu{position:absolute;top:calc(100% + 8px);right:4%;width:min(220px,88vw);padding:8px;background:var(--panel);border:1px solid var(--stroke);border-radius:14px;box-shadow:0 18px 40px #0008;display:none;flex-direction:column;z-index:30}.mobileMenu.open{display:flex}.mobileMenu a{display:block!important;padding:12px 13px;color:var(--soft);font-size:14px;font-weight:600;border-radius:9px}.mobileMenu a.navActive,.mobileMenu a:hover{color:var(--ink);background:#ffffff08}.workIntro{padding-top:45px}.introRow{display:block}.introRow>p{margin-top:20px}.workGrid{grid-template-columns:1fr}.workMedia{aspect-ratio:16/9;height:auto}.socialTrack{grid-template-columns:repeat(3,minmax(0,1fr))}.socialPanel{padding:16px}.socialHead{align-items:flex-start}.socialHead>a{display:none}.contactRow{display:block}.contactRow .btn{margin-top:22px}.serviceAdminForm{grid-template-columns:1fr}.navActions{gap:12px}.quoteBtn{padding:10px 16px}.footerTop{grid-template-columns:1fr;gap:18px}.footerNav{justify-content:flex-start;flex-wrap:wrap;gap:16px}.footerSocials{justify-content:flex-start}.footerBottom{display:grid;gap:8px}
 }
 @media(max-width:480px){.brandLogo b{font-size:20px}.brandLogo span{font-size:7px}.themeToggle{gap:5px}.themeToggle svg{display:block;width:14px;height:14px;flex:none}.themeSwitch{width:40px;height:24px;padding:2px}.themeSwitch i{width:18px;height:18px}.socialTrack{grid-template-columns:repeat(2,minmax(0,1fr))}.workCopy{min-height:112px}.introRow h1{font-size:56px}.mobileMenu{right:4%;width:210px}}
+
+/* v13: cleaner mobile header + real social links + homepage curation */
+.mobileQuote{display:flex!important;align-items:center;justify-content:space-between;background:var(--ink);color:var(--page)!important;margin-top:6px;padding:12px 13px!important}
+.socialEmpty{min-height:120px;margin-top:20px;border:1px dashed var(--stroke);border-radius:12px;display:grid;place-items:center;text-align:center;padding:22px;color:var(--soft);font-size:12px;line-height:1.6}
+@media(max-width:760px){
+  .desktopQuote{display:none!important}
+  .siteHeader .nav{gap:10px}
+  .navActions{gap:9px}
+  .socialHead>a.socialVisit{display:inline-flex!important;align-items:center;gap:4px;font-size:10px;padding:7px 9px;border:1px solid var(--stroke);border-radius:999px;color:var(--ink);background:transparent}
+  .socialHead{align-items:center}
+}
+@media(max-width:480px){
+  .socialHead{gap:8px}
+  .socialTitle{gap:8px;min-width:0}
+  .socialTitle h3{font-size:16px}
+  .socialTitle p{font-size:10px}
+  .socialHead>a.socialVisit{font-size:9px;padding:6px 8px;flex:none}
+}
+.socialSyncActions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:16px;margin-bottom:4px;border-bottom:1px solid var(--stroke)}
+.socialSyncActions .muted{font-size:12px}
+.manualPhotoUrl{max-width:280px}
+@media(max-width:760px){.manualPhotoUrl{max-width:none;min-width:0;flex:1 1 100%}}
+
+/* v14: never crop portfolio/social images + mobile social links */
+.workMedia{background:var(--panel)}
+.workMedia img{object-fit:contain!important;background:var(--panel)}
+.socialTile img{object-fit:contain!important;background:var(--panel)}
+.socialPlayer{object-fit:contain!important;background:#0b1014}
+.socialEmpty{min-height:130px;margin-top:20px;border:1px dashed var(--stroke);border-radius:12px;display:grid;place-items:center;text-align:center;padding:24px;color:var(--soft);font-size:12px;line-height:1.5}
+@media(max-width:760px){
+  .siteHeader .desktopQuote{display:none!important}
+  .socialHead>a.socialVisit{display:inline-flex!important;align-items:center;gap:5px;font-size:10px;padding:7px 9px;border:1px solid var(--stroke);border-radius:999px;color:var(--ink);background:transparent;white-space:nowrap}
+  .workMedia{aspect-ratio:16/9;height:auto;min-height:0}
+}
+@media(max-width:480px){
+  .socialHead>a.socialVisit{font-size:9px;padding:6px 8px}
+}
+.workMedia img.isActive{transform:none!important}
+.photoCard img{object-fit:contain!important;background:var(--panel)}
+
+/* FINAL HOMEPAGE CARD + MOBILE NAV SPEC */
+.workGrid{align-items:start}
+.workCard{align-self:start;min-width:0}
+.workMedia{height:auto!important;min-height:0!important;aspect-ratio:16/9;position:relative;overflow:hidden;touch-action:pan-y;background:var(--panel)}
+.workMedia img{position:absolute!important;inset:0;width:100%;height:100%;object-fit:contain!important;object-position:center;transform:none!important;background:var(--panel)}
+.workMedia img.isActive{opacity:1}
+.workCopy{min-height:0!important;padding:17px 18px 18px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.workInfo{min-width:0;flex:1}
+.workCopy h3{margin:0 0 8px}
+.workCopy p{margin:0;max-width:430px}
+.workCtaBlock{display:flex;align-items:flex-end;gap:9px;flex:none}
+.workCtaBlock>span{font-size:10px;color:var(--soft);white-space:nowrap}
+.workCta{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid var(--stroke);border-radius:999px;color:var(--ink);font-size:12px;font-weight:700;white-space:nowrap;background:transparent}
+.workCta:hover{background:var(--ink);color:var(--page)}
+.swipeHint{display:none;text-align:center;padding:8px 0 10px;color:var(--soft);font-size:10px;letter-spacing:.04em}
+.desktopQuote{display:inline-flex}
+.mobileMenu{display:none}
+.socialHead>a.socialVisit{display:inline-flex!important}
+@media(max-width:760px){
+  .siteHeader .desktopQuote,.siteHeader .quoteBtn{display:none!important}
+  .mobileMenuBtn{display:flex!important}
+  .mobileMenu{display:none}
+  .mobileMenu.open{display:flex}
+  .mobileQuote{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding:13px 0;border-top:1px solid var(--stroke);font-weight:700}
+  .workArrow{display:none!important}
+  .workMedia{height:auto!important;min-height:0!important;aspect-ratio:16/9}
+  .workCopy{display:block;padding:15px 16px 17px}
+  .workCtaBlock{display:block}
+  .workCtaBlock>span{display:block;margin-bottom:7px}
+  .workCta{width:100%;min-height:44px}
+  .swipeHint{display:block}
+  .socialHead>a.socialVisit{display:inline-flex!important;font-size:9px;padding:6px 8px}
+}
