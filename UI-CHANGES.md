@@ -1,8 +1,17 @@
-# UI changes — v11
+# UI changes
 
-- Rebuilt the homepage responsive navigation to match the supplied concept: desktop nav plus a mobile hamburger menu containing Home, About, Services, Projects and Contact.
-- Changed work-card media to a 16:9 presentation so desktop images are less aggressively cropped.
-- Reworked Instagram + YouTube sections to match the concept: branded header, View link, six-image thumbnail strip, play indicators, arrows and swipe support.
-- Added local visual fallback thumbnails so the social sections are visible immediately even before social video records are added in Admin. Real approved YouTube/Instagram records replace these automatically.
-- Reworked the footer to match the concept with brand, navigation, Instagram, YouTube and WhatsApp icons, plus the bottom copyright line.
-- Preserved the existing no-price homepage/admin behavior and existing Cloudflare Worker + D1 architecture.
+- Mobile header now keeps the Sun and Moon icons visible around the light/dark theme switch.
+- The theme switch remains available on desktop and mobile and persists with localStorage.
+- Added the supplied YouTube channel URL to the homepage's “View on YouTube” link:
+  https://youtube.com/@impressionphotography9904?si=JL8Xxrtb6aafGLvo
+- Instagram homepage content remains Reel-only. Instagram admin video links are now validated as `/reel/...` URLs only.
+- The Instagram profile URL supplied by the user was identical to the YouTube URL, so it was not used as an Instagram URL. The homepage currently falls back to `https://www.instagram.com/` until the actual Instagram profile URL is supplied.
+
+### v13 social/home curation
+- Mobile header now keeps Get a Quote inside the hamburger menu; desktop retains the header CTA.
+- Mobile Instagram/YouTube panels now keep their View on Instagram / View on YouTube links visible.
+- Removed fake social fallback cards. Social panels only display content actually stored/synced from Instagram or YouTube.
+- Homepage work cards show at most 5 images, using the newest published year available for that category.
+- Instagram sync now imports approved-photo candidates and Instagram Reels separately; Reels remain hosted by Instagram.
+- Added YouTube channel sync endpoint and Admin button; it pulls latest uploads from the configured channel without requiring manual link entry.
+- Added a temporary manual WebP photo URL option for testing while R2 is unavailable.

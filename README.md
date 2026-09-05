@@ -92,3 +92,7 @@ Set the Worker variable `ADMIN_HOST` to the exact admin hostname, for example `m
 ## Videos
 
 The admin Videos section accepts YouTube, Instagram post/Reel, and legacy Vimeo links. YouTube uses the official IFrame Player API for play/pause and the site provides swipe/navigation between items. Instagram content remains embedded from Instagram; its playback controls remain controlled by Instagram. Video files are not stored in R2.
+
+## Social sync secrets
+
+For automatic social content sync, add these Worker secrets: `INSTAGRAM_USER_ID`, `INSTAGRAM_ACCESS_TOKEN`, optional `INSTAGRAM_GRAPH_VERSION`, and `YOUTUBE_API_KEY`. The YouTube channel defaults to `@impressionphotography9904`; set `YOUTUBE_CHANNEL_HANDLE` only if you want to override it. Instagram photo sync imports images for admin approval; Instagram Reels remain hosted by Instagram. YouTube sync imports video metadata/IDs and playback remains on YouTube.
