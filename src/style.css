@@ -29,3 +29,29 @@ html[data-theme="light"] .panel,html[data-theme="light"] .stat,html[data-theme="
 html[data-theme="light"] .input,html[data-theme="light"] select{background:#fff;color:#171b1e;border-color:var(--stroke)}
 html[data-theme="light"] .outline{color:#171b1e;border-color:var(--stroke)}html[data-theme="light"] .adminBack{color:#62676a}html[data-theme="light"] .adminBack:hover{color:#171b1e}
 html[data-theme="dark"] .archive{background:#0b1014;color:#f5f7f8}html[data-theme="dark"] .archive h2,html[data-theme="dark"] .projectFilms>div>h3{color:#f5f7f8}html[data-theme="dark"] .archive .muted,html[data-theme="dark"] .projectIntro p{color:#9da8ae}html[data-theme="dark"] .projectIntro{background:#080d11;color:#f5f7f8}html[data-theme="dark"] .years{border-color:#273137}html[data-theme="dark"] .years button{color:#68737a}html[data-theme="dark"] .years button.active{color:#fff}html[data-theme="dark"] .categories button{background:#11181d;border-color:#273137;color:#9da8ae}html[data-theme="dark"] .categories button.active{background:#fff;color:#111;border-color:#fff}html[data-theme="dark"] .videoInfo h3{color:#f5f7f8}html[data-theme="dark"] .videoThumbs button{background:#11181d;border-color:#273137;color:#9da8ae}html[data-theme="dark"] .videoThumbs button.active{background:#fff;color:#111;border-color:#fff}
+
+/* Mobile navigation + footer social links + WhatsApp CTA icon */
+.mobileNav{display:none}
+.whatsappIcon{display:block;flex:none}
+.whatsappCard{color:var(--ink)}
+.footerWrap{align-items:flex-start}
+.footerWrap>div:first-child{display:grid;gap:7px}
+.footerSocials{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px 18px}
+.footerSocials a{display:inline-flex;align-items:center;gap:7px;color:var(--soft);font-size:12px}
+.footerSocials a:hover{color:var(--ink)}
+@media(max-width:760px){
+  .siteHeader .nav{height:64px}
+  .siteHeader>.nav>nav{display:none}
+  .mobileNav{display:flex;align-items:center;gap:22px;width:92%;overflow-x:auto;scrollbar-width:none;padding:0 0 11px;font-size:13px;font-weight:600;white-space:nowrap}
+  .mobileNav::-webkit-scrollbar{display:none}
+  .mobileNav a{color:var(--soft);flex:none}
+  .mobileNav a.navActive,.mobileNav a:hover{color:var(--ink)}
+  .footerWrap{display:grid!important;grid-template-columns:1fr;gap:18px}
+  .footerSocials{justify-content:flex-start}
+}
+@media(max-width:480px){
+  .mobileNav{gap:18px;font-size:12px;padding-bottom:10px}
+  .navActions{gap:9px}
+  .themeToggle{gap:4px}
+  .quoteBtn{padding:9px 13px;font-size:13px}
+}
