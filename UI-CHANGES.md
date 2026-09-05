@@ -1,12 +1,8 @@
-# Impression Photography UI changes
+# UI changes
 
-- Homepage redesigned to closely match the supplied reference: dark premium layout, 3x2 work grid, rounded cards, arrows and dots.
-- Homepage service cards no longer display package prices.
-- Card images are swipeable on touch devices and have desktop previous/next controls.
-- Homepage now has separate Instagram Reels and YouTube featured-video carousels.
-- Instagram Reel links are embedded from Instagram; YouTube videos are embedded from YouTube and use the official IFrame Player API for playback.
-- Social video carousels support swipe/previous/next selection.
-- Added persistent light/dark mode toggle to the public navigation and admin.
-- Admin catalogue no longer displays or asks for prices.
-- Public services API and admin services API no longer return the price field.
-- R2 remains unconfigured; no R2 binding was added.
+- Mobile header now keeps the Sun and Moon icons visible around the light/dark theme switch.
+- The theme switch remains available on desktop and mobile and persists with localStorage.
+- Added the supplied YouTube channel URL to the homepage's “View on YouTube” link:
+  https://youtube.com/@impressionphotography9904?si=JL8Xxrtb6aafGLvo
+- Instagram homepage content remains Reel-only. Instagram admin video links are now validated as `/reel/...` URLs only.
+- The Instagram profile URL supplied by the user was identical to the YouTube URL, so it was not used as an Instagram URL. The homepage currently falls back to `https://www.instagram.com/` until the actual Instagram profile URL is supplied.
