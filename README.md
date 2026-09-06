@@ -96,3 +96,17 @@ The admin Videos section accepts YouTube, Instagram post/Reel, and legacy Vimeo 
 ## Social sync secrets
 
 For automatic social content sync, add these Worker secrets: `INSTAGRAM_USER_ID`, `INSTAGRAM_ACCESS_TOKEN`, optional `INSTAGRAM_GRAPH_VERSION`, and `YOUTUBE_API_KEY`. The YouTube channel defaults to `@impressionphotography9904`; set `YOUTUBE_CHANNEL_HANDLE` only if you want to override it. Instagram photo sync imports images for admin approval; Instagram Reels remain hosted by Instagram. YouTube sync imports video metadata/IDs and playback remains on YouTube.
+
+## Google Reviews
+
+The homepage reviews section now uses real Google Places review data. It filters to 4-star and 5-star reviews and automatically rotates the displayed cards. No fake/sample reviews are bundled.
+
+Before deploying, add the Google Places API key as a Worker secret:
+
+```bash
+npx wrangler secret put GOOGLE_PLACES_API_KEY
+```
+
+The configured Google Place ID is the Impression Photography Goa listing. If the business listing changes, set `GOOGLE_PLACE_ID` in `wrangler.toml` or as an environment variable.
+
+Google requires review author attribution and access to the source review; the UI includes the reviewer name/photo when supplied and a "View on Google Maps" link.
