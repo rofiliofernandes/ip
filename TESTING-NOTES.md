@@ -4,7 +4,7 @@
 - Each homepage category uses the newest year that has published photos for that category.
 - At most 5 photos are used per category.
 - If there are no published photos for that category, the existing design fallback is shown.
-- The public project archive remains year/category based.
+- The public gallery is category based; year filters and year metadata are removed.
 - Homepage and project images use `object-fit: contain` so source photos are not cropped. Portrait/landscape mismatches may show letterboxing instead of cutting the image.
 
 ## Social content

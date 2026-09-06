@@ -67,8 +67,8 @@ For production, connect your Cloudflare domain and configure the Instagram/Meta 
 
 ## Latest content workflow
 
-- Public portfolio is labeled **Project**, not Archive.
-- The Project view defaults to **Beach** when that category exists for the selected year; otherwise it falls back to All.
+- Public portfolio is labeled **Gallery**; the gallery is category-first and has no year filter.
+- The Gallery view defaults to **All** categories and can open directly to a category from the homepage.
 - The portfolio uses a stable masonry-style column layout so portrait and landscape photos keep their full aspect ratio instead of leaving large grid gaps or being cropped.
 - Instagram sync imports **photos only**. Captions are parsed case-insensitively for category hashtags: `#Beach`, `#Birthday`, `#Family`, `#Maternity`, `#Portfolio`, `#Pre-Wedding`, and `#Wedding`. The first matching hashtag in the caption becomes the initial category. Imported photos remain pending until an admin publishes them.
 - Manual uploads are converted in the browser to **WebP before upload**. The R2 upload endpoint accepts only `image/webp` and only `.webp` object keys.
