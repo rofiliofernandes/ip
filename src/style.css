@@ -216,3 +216,5 @@ body:has(.referenceHome) .mobileMenu{top:66px}
 .waWidget{position:fixed;right:24px;bottom:22px;z-index:100;text-decoration:none}.waBubble{width:66px;height:66px;border-radius:50%;background:#25D366;color:#fff;display:grid;place-items:center;box-shadow:0 8px 28px #0005;cursor:pointer;transition:transform .2s ease}.waWidget:hover .waBubble{transform:scale(1.05)}
 @media(max-width:900px){.footerInfo{grid-template-columns:1fr;gap:28px;padding:38px 0}.footerBottomNew{grid-template-columns:1fr;gap:20px}.footerSocials{justify-content:flex-start}.footerMapFull{height:300px}}
 @media(max-width:600px){.footerInfoCol h3{font-size:20px}.footerInfoCol p{font-size:13px}.footerMapFull{height:270px}.waWidget{right:15px;bottom:15px}.waBubble{width:60px;height:60px}.siteFooter .footerSocials a{width:52px;height:52px}.siteFooter .footerSocials{gap:12px}}
+
+.errorText{color:#c85b5b;margin:.75rem 0 0}.setupLink,.setupBack{display:block;margin-top:.8rem}.setupLink{text-align:center}
