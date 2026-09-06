@@ -23,8 +23,9 @@
 
 ## Instagram API setup
 The API integration expects these Worker secrets:
-- `INSTAGRAM_USER_ID`
-- `INSTAGRAM_ACCESS_TOKEN`
+- `INSTAGRAM_APP_ID`
+- `INSTAGRAM_APP_SECRET` (secret)
+- `INSTAGRAM_REDIRECT_URI`
 - optional `INSTAGRAM_GRAPH_VERSION` (defaults to `v24.0` in this project)
 
 The Instagram account must be a Professional account (Business or Creator). The current Meta Instagram Login path uses the `instagram_business_basic` permission for basic account/media access. See Meta's Instagram API documentation/Postman collection.
@@ -37,3 +38,9 @@ Worker variable:
 - `YOUTUBE_CHANNEL_HANDLE=@impressionphotography9904`
 
 After setting the key, use Admin -> Videos -> Sync YouTube channel. The backend finds the channel's uploads playlist and paginates through its public uploads.
+
+### Instagram Business Login
+- Client connection URL: `https://ip.rofitest8.workers.dev/api/instagram/connect`
+- Callback: `/api/instagram/callback`
+- Required scope for the current website sync: `instagram_business_basic`
+- The Worker exchanges and encrypts the long-lived token in D1.

@@ -95,7 +95,7 @@ The admin Videos section accepts YouTube, Instagram post/Reel, and legacy Vimeo 
 
 ## Social sync secrets
 
-For automatic social content sync, add these Worker secrets: `INSTAGRAM_USER_ID`, `INSTAGRAM_ACCESS_TOKEN`, optional `INSTAGRAM_GRAPH_VERSION`, and `YOUTUBE_API_KEY`. The YouTube channel defaults to `@impressionphotography9904`; set `YOUTUBE_CHANNEL_HANDLE` only if you want to override it. Instagram photo sync imports images for admin approval; Instagram Reels remain hosted by Instagram. YouTube sync imports video metadata/IDs and playback remains on YouTube.
+For automatic social content sync, the Instagram Business Login flow stores the connected account token in D1. You only need the Instagram app credentials described above plus `YOUTUBE_API_KEY` for YouTube. The YouTube channel defaults to `@impressionphotography9904`; set `YOUTUBE_CHANNEL_HANDLE` only if you want to override it. Instagram photo sync imports images for admin approval; Instagram Reels remain hosted by Instagram. YouTube sync imports video metadata/IDs and playback remains on YouTube. The older `INSTAGRAM_USER_ID` / `INSTAGRAM_ACCESS_TOKEN` variables are supported only as a fallback for manual/testing deployments.
 
 ## Google Reviews
 
