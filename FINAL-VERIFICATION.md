@@ -1,26 +1,28 @@
-# Final Verification Notes
+# Impression Photography — Exact UI Revision Verification
 
-## Runtime error fixed
-The previous package was missing the client-side declarations for `Nav`, `usePublicData`, `HOME_CARDS`, and `buildHomeCardImages`, while `Home()` and `Projects()` still called `usePublicData()`. This caused the browser runtime error:
+This package replaces the previous homepage visual system with the approved reference-style layout.
 
-`ReferenceError: usePublicData is not defined`
+## Homepage order
+1. Minimal transparent header: logo, theme toggle, hamburger menu.
+2. Cinematic hero with centered title and Get in Touch.
+3. Three-image strip.
+4. About Us split section.
+5. Image Gallery preview: 4 columns x 2 rows on desktop.
+6. Instagram Gallery: published Instagram image posts only; latest 16, 4 x 4 desktop and 1 column on phone.
+7. YouTube Gallery: YouTube videos only.
+8. Testimonials.
+9. Instagram Reels: Instagram Reels only; last content section before footer.
+10. Existing dark footer.
 
-Those declarations are now restored in `src/main.tsx`.
-
-## UI fixes retained
-- Desktop header keeps Get a Quote.
-- Mobile header hides the desktop Get a Quote button and puts Get a Quote inside the hamburger menu.
-- Card CTA is a full-width content section rather than competing with the description.
-- Card description uses the full available width.
-- Images preserve their intrinsic aspect ratio and are not forced to crop.
-- Desktop arrows remain; mobile arrows are hidden.
-- Mobile swipe hint is shown for multi-photo cards and is removed after a successful swipe.
-- Homepage cards use masonry-style columns on desktop/tablet and a single column on mobile.
-- Social View on Instagram/YouTube links remain visible on mobile.
-- Frontend fallback service/card data contains no prices.
+## Data behavior
+- Public `/api/public` already returns `source` for photos.
+- Instagram image grid filters `source === instagram` and uses newest database order.
+- YouTube gallery filters `platform === youtube`.
+- Instagram Reels filters `platform === instagram`.
+- No year UI is used by the homepage or Gallery.
+- `/gallery` is the public gallery; `/projects` remains an alias for compatibility.
 
 ## Validation
-- ZIP archive was recreated from the complete project root.
-- `unzip -t` passes.
-- Static source inspection confirms the previously missing runtime declarations are present.
-- Full `vite build` could not be executed in this environment because dependency installation timed out; therefore no claim of a completed production build is made here.
+- ZIP archive integrity checked with `unzip -t`.
+- TypeScript parser check completed with global `tsc`; no syntax diagnostics (TS1005/TS1109/TS1128/TS1161/TS17008/TS1382/TS1434) were reported.
+- A full Vite production build was not possible in this environment because dependency installation timed out; therefore this package does not claim a locally completed `vite build`.
