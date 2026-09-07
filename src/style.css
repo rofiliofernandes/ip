@@ -147,3 +147,182 @@
   .siteHeader .brandLogo img{width:108px;height:50px}
 }
 @media(max-width:440px){.siteHeader .brandLogo img{width:100px;height:46px}}
+
+/* V5 — homepage reference layout: shallow hero + compact 3-up auto-sliding strip */
+html:not([data-theme="dark"]){--bg:#f7f4eb;--text:#202326}
+
+/* The reference design is light by default; the existing toggle still switches to dark mode. */
+.siteHeader{min-height:74px}
+.nav{min-height:74px}
+.desktopQuote{display:none}
+[data-theme="light"] .siteHeader,
+html:not([data-theme="dark"]) .siteHeader{background:#f7f4eb;border-bottom:1px solid #20232614;backdrop-filter:none}
+[data-theme="light"] .desktopNav a,
+html:not([data-theme="dark"]) .desktopNav a{color:#34383a}
+[data-theme="light"] .desktopNav a:hover,
+[data-theme="light"] .navActive,
+html:not([data-theme="dark"]) .desktopNav a:hover,
+html:not([data-theme="dark"]) .navActive{color:#111!important}
+[data-theme="light"] .themeToggle,
+html:not([data-theme="dark"]) .themeToggle{color:#202326}
+[data-theme="light"] .themeSwitch,
+html:not([data-theme="dark"]) .themeSwitch{border-color:#202326}
+[data-theme="light"] .themeSwitch i,
+html:not([data-theme="dark"]) .themeSwitch i{background:#202326}
+
+.referenceHero{min-height:0;height:196px;display:block;position:relative}
+.heroCenter{position:absolute;left:max(7.8vw,48px);top:50%;transform:translateY(-50%);padding:0;text-align:left;max-width:560px}
+.heroCenter small{font-size:10px;letter-spacing:.30em}
+.heroCenter h1{font-size:clamp(40px,4vw,58px);line-height:.98;margin:12px 0 17px;letter-spacing:-.045em}
+.heroCenter .referenceButton{min-height:38px;padding:9px 15px;font-size:10px;border-radius:10px}
+.heroDots{bottom:16px;left:50%;transform:translateX(-50%);gap:8px}
+.heroDots button{width:8px;height:8px}
+
+.rollingStrip{background:#f7f4eb;padding:18px 0 26px}
+.rollingViewport{width:min(1370px,88%);max-width:none;margin:auto;overflow:hidden}
+.rollingTrack{display:flex;gap:22px;width:200%;margin:0;will-change:transform}
+.rollingImage{flex:0 0 calc((100% - 44px)/3);aspect-ratio:2.35/1;background:#e7e1d5;overflow:hidden}
+.rollingImage img{width:100%;height:100%;display:block;object-fit:cover}
+.rollingImage:hover img{transform:none}
+
+/* Keep the rest of the public homepage flowing naturally after the compact reference strip. */
+@media(max-width:1000px){
+  .referenceHero{height:190px}
+  .heroCenter{left:6vw}
+  .rollingViewport{width:92%}
+  .rollingTrack{gap:16px}
+  .rollingImage{flex-basis:calc((100% - 32px)/3)}
+}
+@media(max-width:700px){
+  .siteHeader,.nav{min-height:58px}
+  .siteHeader .referenceWrap.nav{padding:4px 14px}
+  .desktopNav{display:none}
+  .mobileMenuBtn{display:block}
+  .referenceHero{height:205px}
+  .heroCenter{left:24px;right:24px;max-width:none}
+  .heroCenter small{font-size:8px;letter-spacing:.24em}
+  .heroCenter h1{font-size:34px;margin:8px 0 12px}
+  .heroCenter .referenceButton{min-height:34px;padding:7px 12px}
+  .heroDots{bottom:11px}
+  .rollingStrip{padding:14px 0 22px}
+  .rollingViewport{width:100%}
+  .rollingTrack{gap:10px;width:200%}
+  .rollingImage{flex:0 0 calc((100% - 20px)/3);aspect-ratio:2.1/1}
+}
+@media(max-width:440px){
+  .siteHeader .brandLogo img{width:84px;height:42px}
+  .referenceHero{height:190px}
+  .heroCenter{left:20px}
+  .heroCenter h1{font-size:30px}
+  .rollingImage{aspect-ratio:2/1}
+}
+
+/* V5 carousel math: the duplicated track is sized by JS, so each card always occupies
+   exactly one visible slot and one whole card advances per automatic step. */
+.rollingTrack{width:auto!important}
+.rollingImage{flex:0 0 calc((100% - 198px)/10)}
+@media(max-width:1000px){.rollingImage{flex-basis:calc((100% - 144px)/10)}}
+@media(max-width:700px){.rollingImage{flex-basis:calc((100% - 90px)/10)}}
+
+/* V5-A: finish the light-mode admin pass. Dark-mode card backgrounds were
+   leaking into light mode, making dark text effectively unreadable. */
+[data-theme="light"] .admin aside button.active,
+[data-theme="light"] .admin aside button:hover,
+[data-theme="light"] .admin aside .adminBack:hover,
+html:not([data-theme="dark"]) .admin aside button.active,
+html:not([data-theme="dark"]) .admin aside button:hover,
+html:not([data-theme="dark"]) .admin aside .adminBack:hover{
+  background:#e9e4d9 !important;
+  color:#202326 !important;
+}
+[data-theme="light"] .admin aside button.active svg,
+[data-theme="light"] .admin aside button:hover svg,
+html:not([data-theme="dark"]) .admin aside button.active svg,
+html:not([data-theme="dark"]) .admin aside button:hover svg{
+  color:#202326 !important;
+}
+[data-theme="light"] .admin .listItem,
+[data-theme="light"] .admin .stat,
+[data-theme="light"] .admin .distributionCard,
+[data-theme="light"] .admin .photoCard,
+[data-theme="light"] .admin .devicePanel,
+[data-theme="light"] .admin .homepagePanel,
+html:not([data-theme="dark"]) .admin .listItem,
+html:not([data-theme="dark"]) .admin .stat,
+html:not([data-theme="dark"]) .admin .distributionCard,
+html:not([data-theme="dark"]) .admin .photoCard,
+html:not([data-theme="dark"]) .admin .devicePanel,
+html:not([data-theme="dark"]) .admin .homepagePanel{
+  background:#fffdf8 !important;
+  color:#202326 !important;
+  border-color:#d6d0c5 !important;
+}
+[data-theme="light"] .admin .listItem b,
+[data-theme="light"] .admin .listItem span,
+[data-theme="light"] .admin .distributionCard,
+[data-theme="light"] .admin .distributionCard b,
+[data-theme="light"] .admin .distributionCard span,
+[data-theme="light"] .admin .distributionCard small,
+[data-theme="light"] .admin .photoCard > div,
+[data-theme="light"] .admin .stat b,
+[data-theme="light"] .admin .stat span,
+[data-theme="light"] .admin .devicePanel h3,
+[data-theme="light"] .admin .careerListItem b,
+html:not([data-theme="dark"]) .admin .listItem b,
+html:not([data-theme="dark"]) .admin .listItem span,
+html:not([data-theme="dark"]) .admin .distributionCard,
+html:not([data-theme="dark"]) .admin .distributionCard b,
+html:not([data-theme="dark"]) .admin .distributionCard span,
+html:not([data-theme="dark"]) .admin .distributionCard small,
+html:not([data-theme="dark"]) .admin .photoCard > div,
+html:not([data-theme="dark"]) .admin .stat b,
+html:not([data-theme="dark"]) .admin .stat span,
+html:not([data-theme="dark"]) .admin .devicePanel h3,
+html:not([data-theme="dark"]) .admin .careerListItem b{
+  color:#202326 !important;
+}
+[data-theme="light"] .admin .listItem span,
+[data-theme="light"] .admin .distributionCard small,
+[data-theme="light"] .admin .stat span,
+html:not([data-theme="dark"]) .admin .listItem span,
+html:not([data-theme="dark"]) .admin .distributionCard small,
+html:not([data-theme="dark"]) .admin .stat span{
+  color:#596267 !important;
+}
+[data-theme="light"] .admin .modes button,
+[data-theme="light"] .admin .segmented button,
+[data-theme="light"] .admin .settingRow label,
+[data-theme="light"] .admin .distributionGrid label,
+html:not([data-theme="dark"]) .admin .modes button,
+html:not([data-theme="dark"]) .admin .segmented button,
+html:not([data-theme="dark"]) .admin .settingRow label,
+html:not([data-theme="dark"]) .admin .distributionGrid label{
+  color:#394146 !important;
+}
+[data-theme="light"] .admin .modes button:not(.sel),
+[data-theme="light"] .admin .segmented button:not(.sel),
+html:not([data-theme="dark"]) .admin .modes button:not(.sel),
+html:not([data-theme="dark"]) .admin .segmented button:not(.sel){
+  background:#fffdf8 !important;
+  border-color:#c8c1b5 !important;
+}
+[data-theme="light"] .admin .layoutSummary,
+[data-theme="light"] .admin .curation small,
+html:not([data-theme="dark"]) .admin .layoutSummary,
+html:not([data-theme="dark"]) .admin .curation small{
+  color:#596267 !important;
+}
+[data-theme="light"] .admin .layoutSummary b,
+html:not([data-theme="dark"]) .admin .layoutSummary b{color:#202326 !important}
+
+/* V5-A: Careers Google Form action */
+.googleFormButton{background:#e8dfcf;color:#202326;border:1px solid #c9bda8}
+.googleFormButton:hover{background:#ded1bb}
+.googleFormButton:disabled{opacity:.65;cursor:wait}
+.googleFormHelp{margin:9px 0 0}
+[data-theme="light"] .googleFormButton{background:#e8dfcf;color:#202326;border-color:#c9bda8}
+
+@media(max-width:700px){
+  .careerFormActions{flex-wrap:wrap}
+  .careerFormActions .googleFormButton{width:100%}
+}

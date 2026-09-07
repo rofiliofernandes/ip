@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 
-type Env={DB:D1Database;MEDIA?:R2Bucket;ASSETS:Fetcher;SESSION_SECRET:string;TOKEN_ENCRYPTION_KEY?:string;RESEND_API_KEY?:string;RESEND_FROM_EMAIL?:string;ADMIN_OWNER_EMAIL?:string;SITE_NAME:string;PHONE:string;MAPS_URL:string;ADMIN_HOST?:string;INSTAGRAM_ACCESS_TOKEN?:string;INSTAGRAM_USER_ID?:string;INSTAGRAM_GRAPH_VERSION?:string;INSTAGRAM_APP_ID?:string;INSTAGRAM_APP_SECRET?:string;INSTAGRAM_REDIRECT_URI?:string;YOUTUBE_API_KEY?:string;YOUTUBE_CHANNEL_HANDLE?:string;GOOGLE_PLACES_API_KEY?:string;GOOGLE_PLACE_ID?:string};
+type Env={DB:D1Database;MEDIA?:R2Bucket;ASSETS:Fetcher;SESSION_SECRET:string;TOKEN_ENCRYPTION_KEY?:string;RESEND_API_KEY?:string;RESEND_FROM_EMAIL?:string;ADMIN_OWNER_EMAIL?:string;SITE_NAME:string;PHONE:string;MAPS_URL:string;ADMIN_HOST?:string;INSTAGRAM_ACCESS_TOKEN?:string;INSTAGRAM_USER_ID?:string;INSTAGRAM_GRAPH_VERSION?:string;INSTAGRAM_APP_ID?:string;INSTAGRAM_APP_SECRET?:string;INSTAGRAM_REDIRECT_URI?:string;YOUTUBE_API_KEY?:string;YOUTUBE_CHANNEL_HANDLE?:string;GOOGLE_PLACES_API_KEY?:string;GOOGLE_PLACE_ID?:string;GOOGLE_FORMS_SCRIPT_URL?:string;GOOGLE_FORMS_SCRIPT_SECRET?:string};
 const app=new Hono<{Bindings:Env}>();
 function hostMatchesConfiguredAdmin(c:any){const configured=String(c.env.ADMIN_HOST||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/$/,'');if(!configured)return false;const requestHost=new URL(c.req.url).host.toLowerCase();return requestHost===configured||requestHost.split(':')[0]===configured.split(':')[0]}
 app.use('*',async(c,next)=>{const sensitive=c.req.path.startsWith('/admin')||c.req.path.startsWith('/api/admin')||['/api/login','/api/logout','/api/me','/api/setup','/api/setup/status'].includes(c.req.path);if(sensitive&&!hostMatchesConfiguredAdmin(c))return c.notFound();if(c.req.method!=='GET'&&c.req.method!=='HEAD'&&c.req.method!=='OPTIONS'&&(c.req.path.startsWith('/api/admin')||['/api/login','/api/logout','/api/setup/request-code','/api/setup/verify-code','/api/setup/create'].includes(c.req.path))&&!sameOriginRequest(c))return c.json({error:'Invalid request origin'},403);await next()});
@@ -131,6 +131,37 @@ app.get('/api/admin/videos',requireAuth,async c=>c.json((await c.env.DB.prepare(
 app.post('/api/admin/videos',requireAuth,async c=>{let b:any;try{b=await c.req.json()}catch{return c.json({error:'Invalid request'},400)}const id=textField(b.id,100)||uid();const platform=String(b.platform||'youtube')==='instagram'?'instagram':'youtube';const sourceUrl=textField(b.source_url||b.embed_url,2048);const title=textField(b.title,200);const category=textField(b.category||'Other',100);if(!title||!sourceUrl)return c.json({error:'Title and video link are required'},400);if(String(b.title||'').length>200||String(b.source_url||b.embed_url||'').length>2048||String(b.category||'Other').length>100)return c.json({error:'Video fields are too long'},400);let videoId='';let embedUrl=sourceUrl;try{const u=new URL(sourceUrl);if(platform==='youtube'){if(u.hostname.includes('youtu.be'))videoId=u.pathname.slice(1).split('/')[0];else if(u.searchParams.get('v'))videoId=u.searchParams.get('v')||'';else videoId=u.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/)?.[1]||'';if(!videoId)return c.json({error:'Invalid YouTube link'},400);embedUrl=`https://www.youtube.com/embed/${encodeURIComponent(videoId)}?enablejsapi=1&playsinline=1&rel=0&modestbranding=1`;}else if(platform==='instagram'){if(!/instagram\.com$/i.test(u.hostname)&&!/\.instagram\.com$/i.test(u.hostname))return c.json({error:'Invalid Instagram link'},400);const m=u.pathname.match(/\/reel\/([^/?#]+)/);if(!m)return c.json({error:'Use an Instagram Reel URL'},400);embedUrl=`https://www.instagram.com/reel/${m[1]}/embed/?hidecaption=1`;}}catch{return c.json({error:'Invalid video URL'},400)}await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,embed_url=excluded.embed_url,platform=excluded.platform,source_url=excluded.source_url,video_id=excluded.video_id,category=excluded.category,active=excluded.active,sort_order=excluded.sort_order`).bind(id,title,embedUrl,platform,sourceUrl,videoId,category,b.active===false?0:1,boundedInt(b.sort_order,-10000,10000,0)).run();return c.json({ok:true,id});});
 app.delete('/api/admin/videos/:id',requireAuth,async c=>{await c.env.DB.prepare('DELETE FROM videos WHERE id=?').bind(c.req.param('id')).run();return c.json({ok:true});});
 app.get('/api/admin/careers',requireAuth,async c=>{await ensureV3Schema(c);return c.json((await c.env.DB.prepare('SELECT * FROM careers ORDER BY active DESC, valid_until IS NULL, valid_until, sort_order, created_at DESC').all()).results)});
+app.post('/api/admin/careers/generate-google-form',requireAuth,async c=>{
+  let b:any;try{b=await c.req.json()}catch{return c.json({error:'Invalid request'},400)}
+  const title=textField(b.title,180);
+  if(!title)return c.json({error:'Job title is required'},400);
+  const description=textField(b.description,4000);
+  const requirements=textField(b.requirements,4000);
+  const duration=textField(b.duration,180);
+  const validUntil=textField(b.valid_until,10);
+  const scriptUrl=String(c.env.GOOGLE_FORMS_SCRIPT_URL||'').trim();
+  const scriptSecret=String(c.env.GOOGLE_FORMS_SCRIPT_SECRET||'').trim();
+  if(!scriptUrl||!scriptSecret){
+    return c.json({ok:false,setupRequired:true,fallbackUrl:'https://docs.google.com/forms/u/0/create',error:'Google Form generator is not connected yet. The one-time Google Apps Script setup is required.'});
+  }
+  try{
+    const u=new URL(scriptUrl);
+    u.searchParams.set('secret',scriptSecret);
+    u.searchParams.set('title',title);
+    u.searchParams.set('description',description);
+    u.searchParams.set('requirements',requirements);
+    u.searchParams.set('duration',duration);
+    u.searchParams.set('valid_until',validUntil);
+    const r=await fetch(u.toString(),{method:'GET',redirect:'follow'});
+    const text=await r.text();
+    let d:any={};try{d=JSON.parse(text)}catch{}
+    if(!r.ok||!d.editUrl)throw new Error(String(d.error||'Google Apps Script could not create the form'));
+    return c.json({ok:true,editUrl:String(d.editUrl),publishedUrl:d.publishedUrl?String(d.publishedUrl):String(d.editUrl)});
+  }catch(e:any){
+    console.error('GOOGLE_FORM_GENERATE_ERROR',e);
+    return c.json({error:String(e?.message||'Google Form creation failed')},502);
+  }
+});
 app.post('/api/admin/careers',requireAuth,async c=>{await ensureV3Schema(c);let b:any;try{b=await c.req.json()}catch{return c.json({error:'Invalid request'},400)}const id=textField(b.id,100)||uid(),title=textField(b.title,200),requirements=textField(b.requirements,5000),description=textField(b.description,8000),salaryText=textField(b.salary_text,300),duration=textField(b.duration,200),validUntil=textField(b.valid_until,10),formUrl=textField(b.google_form_url,2048),sortOrder=boundedInt(b.sort_order,-10000,10000,0);if(!title)return c.json({error:'Job title is required'},400);if(validUntil&&!/^\d{4}-\d{2}-\d{2}$/.test(validUntil))return c.json({error:'Validity date must be YYYY-MM-DD'},400);if(formUrl){try{const u=new URL(formUrl);if(u.protocol!=='https:')return c.json({error:'Google Form link must use HTTPS'},400)}catch{return c.json({error:'Invalid Google Form link'},400)}}if(String(b.title||'').length>200||String(b.requirements||'').length>5000||String(b.description||'').length>8000||String(b.salary_text||'').length>300||String(b.duration||'').length>200||String(b.google_form_url||'').length>2048)return c.json({error:'Career fields are too long'},400);await c.env.DB.prepare(`INSERT INTO careers(id,title,requirements,description,salary_disclosed,salary_text,duration,valid_until,google_form_url,active,sort_order,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET title=excluded.title,requirements=excluded.requirements,description=excluded.description,salary_disclosed=excluded.salary_disclosed,salary_text=excluded.salary_text,duration=excluded.duration,valid_until=excluded.valid_until,google_form_url=excluded.google_form_url,active=excluded.active,sort_order=excluded.sort_order,updated_at=CURRENT_TIMESTAMP`).bind(id,title,requirements,description,b.salary_disclosed?1:0,salaryText,duration,validUntil||null,formUrl,b.active===false?0:1,sortOrder).run();return c.json({ok:true,id});});
 app.patch('/api/admin/careers/:id',requireAuth,async c=>{await ensureV3Schema(c);let b:any;try{b=await c.req.json()}catch{return c.json({error:'Invalid request'},400)}if(typeof b.active==='boolean'||b.active===0||b.active===1){await c.env.DB.prepare('UPDATE careers SET active=?,updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(b.active?1:0,c.req.param('id')).run();return c.json({ok:true})}return c.json({error:'No supported field to update'},400)});
 app.delete('/api/admin/careers/:id',requireAuth,async c=>{await ensureV3Schema(c);await c.env.DB.prepare('DELETE FROM careers WHERE id=?').bind(c.req.param('id')).run();return c.json({ok:true});});
