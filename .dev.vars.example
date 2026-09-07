@@ -116,3 +116,15 @@ npx wrangler secret put GOOGLE_PLACES_API_KEY
 The configured Google Place ID is the Impression Photography Goa listing. If the business listing changes, set `GOOGLE_PLACE_ID` in `wrangler.toml` or as an environment variable.
 
 Google requires review author attribution and access to the source review; the UI includes the reviewer name/photo when supplied and a "View on Google Maps" link.
+
+# Admin first-time setup email verification
+# RESEND_API_KEY=...
+# RESEND_FROM_EMAIL=Impression Photography <admin@your-verified-domain.com>
+
+
+# First-time Owner setup
+ADMIN_OWNER_EMAIL=owner@example.com
+RESEND_API_KEY=...
+RESEND_FROM_EMAIL=Impression Photography <admin@your-verified-domain.com>
+# Recommended: a separate random secret used only for Instagram token encryption
+TOKEN_ENCRYPTION_KEY=...

@@ -19,7 +19,7 @@ migrations_dir = "migrations"
 SITE_NAME = "Impression Photography"
 PHONE = "8087467783"
 MAPS_URL = "https://maps.google.com/?cid=17848990732573835237&entry=gps"
-ADMIN_HOST = ""
+ADMIN_HOST = "ip.rofitest8.workers.dev"
 GOOGLE_PLACE_ID = "ChIJmeK4XLzBvzsR5X9N1oBatPc"
 INSTAGRAM_APP_ID = "2514565005727841"
 INSTAGRAM_REDIRECT_URI = "https://ip.rofitest8.workers.dev/api/instagram/callback"
@@ -27,3 +27,6 @@ INSTAGRAM_GRAPH_VERSION = "v24.0"
 
 [triggers]
 crons = ["*/15 * * * *"]
+
+# Required for first-time Owner setup (set this in Cloudflare or uncomment and set it here):
+# ADMIN_OWNER_EMAIL = "owner@example.com"

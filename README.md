@@ -56,7 +56,7 @@ Each published photo can be assigned a year and category from the admin panel.
 6. Run `npm run db:migrate`.
 7. Run `npm run build`.
 8. Run `npm run deploy`.
-9. Call `/api/setup` once with the setup token to create the first Owner account.
+9. Open `/admin/setup`, enter the admin email, verify the 6-digit code sent by Resend, then create the Owner account with a password and confirmation.
 
 For production, connect your Cloudflare domain and configure the Instagram/Meta credentials separately. Instagram videos are intentionally excluded from the photo-import workflow.
 
@@ -110,3 +110,15 @@ npx wrangler secret put GOOGLE_PLACES_API_KEY
 The configured Google Place ID is the Impression Photography Goa listing. If the business listing changes, set `GOOGLE_PLACE_ID` in `wrangler.toml` or as an environment variable.
 
 Google requires review author attribution and access to the source review; the UI includes the reviewer name/photo when supplied and a "View on Google Maps" link.
+
+## First-time Owner setup
+The first Owner account is created through email verification rather than a setup token. Configure these Worker settings:
+
+- `RESEND_API_KEY` — Secret containing the Resend API key.
+- `RESEND_FROM_EMAIL` — Text variable containing a sender address on a domain verified in Resend, for example `Impression Photography <admin@yourdomain.com>`.
+- `ADMIN_OWNER_EMAIL` — Text variable containing the authorized email address (or comma-separated list) allowed to initialize the first Owner account. Email verification alone is not sufficient to claim a fresh installation.
+- `TOKEN_ENCRYPTION_KEY` — Secret used only to encrypt Instagram access tokens. Keep it separate from `SESSION_SECRET`. Existing tokens encrypted with the legacy session secret can still be read and will be re-encrypted with the new key when refreshed.
+
+Open `/admin/setup`. The flow is: enter email → receive a 6-digit code → verify the email → enter name, password and confirm password. The verification code expires after 10 minutes and has a maximum of five attempts. The verified setup session expires after 15 minutes. Once an Owner exists, first-time setup is disabled.
+
+`ADMIN_SETUP_TOKEN` is no longer used by the application and can be removed from the Worker secrets after deploying this version. `ADMIN_HOST` should be set to the admin hostname. For production, use a separate hostname such as `manage.example.com` and protect it with Cloudflare Access; the bundled test configuration uses the Worker hostname so the admin can be tested immediately.

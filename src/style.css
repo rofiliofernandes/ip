@@ -218,3 +218,6 @@ body:has(.referenceHome) .mobileMenu{top:66px}
 @media(max-width:600px){.footerInfoCol h3{font-size:20px}.footerInfoCol p{font-size:13px}.footerMapFull{height:270px}.waWidget{right:15px;bottom:15px}.waBubble{width:60px;height:60px}.siteFooter .footerSocials a{width:52px;height:52px}.siteFooter .footerSocials{gap:12px}}
 
 .errorText{color:#c85b5b;margin:.75rem 0 0}.setupLink,.setupBack{display:block;margin-top:.8rem}.setupLink{text-align:center}
+.passwordField{position:relative}.passwordField .input{padding-right:70px}.passwordToggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;padding:6px}.passwordToggle:hover{color:var(--ink)}.passwordHint{font-size:12px;margin:-4px 0 2px}
+
+.passwordMatch{color:#8fd3a6}.passwordMismatch{color:#e79a9a}
