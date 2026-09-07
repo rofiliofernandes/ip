@@ -91,7 +91,7 @@ For testing, `ADMIN_HOST` may be the current Worker hostname. For production, se
 
 ## Videos
 
-The admin Videos section accepts YouTube, Instagram post/Reel, and legacy Vimeo links. YouTube uses the official IFrame Player API for play/pause and the site provides swipe/navigation between items. Instagram content remains embedded from Instagram; its playback controls remain controlled by Instagram. Video files are not stored in R2.
+The admin Videos section accepts YouTube links only for manual video entries. Instagram Reels are synced automatically from the connected Instagram account. YouTube uses the official IFrame Player API for play/pause and the site provides swipe/navigation between items. Instagram content remains embedded from Instagram; its playback controls remain controlled by Instagram. Video files are not stored in R2.
 
 ## Social sync secrets
 

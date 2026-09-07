@@ -34,3 +34,6 @@ To enable permanent originals, create/bind an R2 bucket as `MEDIA` in the Cloudf
 ## Verification
 
 The source was syntax-checked with TypeScript's parser. Full Vite dependency installation/build could not be completed in the build environment because package installation timed out, so run `npm install` and `npm run build` in the normal project environment before deployment.
+
+- Careers page with admin-managed openings, salary visibility, duration, expiry date, manual hide/publish, and Google Form application links.
+- Public YouTube and Instagram video playback remains hosted by the source platform; the website stores references/metadata rather than video files.
