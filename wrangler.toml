@@ -25,9 +25,9 @@ GOOGLE_PLACE_ID = "ChIJmeK4XLzBvzsR5X9N1oBatPc"
 INSTAGRAM_APP_ID = "2514565005727841"
 INSTAGRAM_REDIRECT_URI = "https://ip.rofitest8.workers.dev/api/instagram/callback"
 INSTAGRAM_GRAPH_VERSION = "v24.0"
+ADMIN_OWNER_EMAIL = "rofitest8@gmail.com"
+RESEND_FROM_EMAIL = "onboarding@resend.dev"
 
 [triggers]
 crons = ["*/15 * * * *"]
 
-# Required for first-time Owner setup (set this in Cloudflare or uncomment and set it here):
-# ADMIN_OWNER_EMAIL = "owner@example.com"
