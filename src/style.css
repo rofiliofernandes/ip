@@ -326,3 +326,97 @@ html:not([data-theme="dark"]) .admin .layoutSummary b{color:#202326 !important}
   .careerFormActions{flex-wrap:wrap}
   .careerFormActions .googleFormButton{width:100%}
 }
+
+/* V6 — reference-matched homepage and admin cleanup. */
+.referenceHero{height:590px;min-height:590px;background:#111;display:block;position:relative;overflow:hidden}
+.heroSlides{position:absolute;inset:0;overflow:hidden}
+.heroSlide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition-property:opacity;transition-timing-function:ease-in-out}
+.heroSlide.active{opacity:1}
+.heroOverlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.48)),linear-gradient(90deg,rgba(0,0,0,.30),rgba(0,0,0,.08));z-index:1}
+.heroCenter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:min(1000px,92%);padding:0 20px;text-align:center;color:#fff}
+.heroCenter small{display:block;font-size:11px;letter-spacing:.34em;font-weight:800}
+.heroCenter h1{font:600 clamp(54px,6.2vw,92px)/.98 'Playfair Display',serif;margin:20px auto 28px;letter-spacing:-.045em;text-shadow:0 2px 20px rgba(0,0,0,.2)}
+.heroCenter h1 i{font-style:italic}
+.heroCenter .referenceButton{background:#fff;color:#11161a;border-radius:18px;min-height:48px;padding:13px 20px;font-size:11px;letter-spacing:.17em}
+.heroDots{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;gap:9px;z-index:3}
+.heroDots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.48);cursor:pointer}
+.heroDots button.active{background:#fff}
+
+.rollingStrip{--rolling-gap:2.1vw;--rolling-visible:3;background:#f7f4eb;color:#202326;padding:18px 0 30px;overflow:hidden}
+.rollingViewport{width:100%;max-width:none;margin:0;overflow:hidden;padding:0 12px}
+.rollingTrack{display:flex;gap:var(--rolling-gap);width:max-content;margin:0;will-change:transform}
+.rollingImage{flex:0 0 calc((100vw - 24px - (var(--rolling-gap) * (var(--rolling-visible) - 1))) / var(--rolling-visible));aspect-ratio:16/8.1;overflow:hidden;background:#e8e2d7}
+.rollingImage img{width:100%;height:100%;display:block;object-fit:cover;transition:none}
+.rollingImage:hover img{transform:none}
+
+/* V6 admin light mode: strong readable text and soft active states everywhere. */
+[data-theme="light"] .admin,
+html:not([data-theme="dark"]) .admin{background:#f4f1e9;color:#202326}
+[data-theme="light"] .admin aside,
+html:not([data-theme="dark"]) .admin aside{background:#fffdf8;border-color:#d1cbc0}
+[data-theme="light"] .admin aside button,
+html:not([data-theme="dark"]) .admin aside button,
+[data-theme="light"] .admin .adminBack,
+html:not([data-theme="dark"]) .admin .adminBack{color:#3d4448!important}
+[data-theme="light"] .admin aside button.active,
+html:not([data-theme="dark"]) .admin aside button.active,
+[data-theme="light"] .admin aside button:hover,
+html:not([data-theme="dark"]) .admin aside button:hover,
+[data-theme="light"] .admin .adminBack:hover,
+html:not([data-theme="dark"]) .admin .adminBack:hover{background:#e9e4d9!important;color:#171b1e!important}
+[data-theme="light"] .admin aside button svg,
+html:not([data-theme="dark"]) .admin aside button svg,
+[data-theme="light"] .admin .adminBack svg,
+html:not([data-theme="dark"]) .admin .adminBack svg{color:currentColor!important}
+[data-theme="light"] .admin .panel,
+html:not([data-theme="dark"]) .admin .panel,
+[data-theme="light"] .admin .stat,
+html:not([data-theme="dark"]) .admin .stat,
+[data-theme="light"] .admin .listItem,
+html:not([data-theme="dark"]) .admin .listItem,
+[data-theme="light"] .admin .distributionCard,
+html:not([data-theme="dark"]) .admin .distributionCard,
+[data-theme="light"] .admin .photoCard,
+html:not([data-theme="dark"]) .admin .photoCard,
+[data-theme="light"] .admin .devicePanel,
+html:not([data-theme="dark"]) .admin .devicePanel,
+[data-theme="light"] .admin .homepagePanel,
+html:not([data-theme="dark"]) .admin .homepagePanel{background:#fffdf8!important;color:#202326!important;border-color:#d1cbc0!important}
+[data-theme="light"] .admin h1,[data-theme="light"] .admin h2,[data-theme="light"] .admin h3,[data-theme="light"] .admin b,
+html:not([data-theme="dark"]) .admin h1,html:not([data-theme="dark"]) .admin h2,html:not([data-theme="dark"]) .admin h3,html:not([data-theme="dark"]) .admin b{color:#202326!important}
+[data-theme="light"] .admin p,[data-theme="light"] .admin label,[data-theme="light"] .admin .muted,[data-theme="light"] .admin span,
+html:not([data-theme="dark"]) .admin p,html:not([data-theme="dark"]) .admin label,html:not([data-theme="dark"]) .admin .muted,html:not([data-theme="dark"]) .admin span{color:#4f585d}
+[data-theme="light"] .admin .input,[data-theme="light"] .admin select,
+html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin select{background:#f8f6f0!important;color:#202326!important;border-color:#c8c1b5!important}
+[data-theme="light"] .admin .input::placeholder,html:not([data-theme="dark"]) .admin .input::placeholder{color:#687177!important;opacity:1}
+[data-theme="light"] .admin .btn.outline,html:not([data-theme="dark"]) .admin .btn.outline{background:#fffdf8!important;color:#202326!important;border-color:#aaa39a!important}
+[data-theme="light"] .admin .btn.outline:hover,html:not([data-theme="dark"]) .admin .btn.outline:hover{background:#e9e4d9!important}
+
+/* Careers actions: equal desktop sizing; stack cleanly on small screens. */
+.careerFormActions{display:grid;grid-template-columns:repeat(2,minmax(0,350px));gap:10px;align-items:stretch}
+.careerFormActions>.btn{width:100%;min-height:46px}
+.googleFormButton{background:#e8dfcf;color:#202326;border:1px solid #c9bda8}
+.googleFormButton:hover{background:#ded1bb}
+.googleFormHelp{margin:9px 0 0}
+
+@media(max-width:1000px){
+  .referenceHero{height:540px;min-height:540px}
+  .rollingStrip{--rolling-gap:18px}
+  .rollingImage{flex-basis:calc((100vw - 24px - (var(--rolling-gap) * 2)) / 3)}
+}
+@media(max-width:700px){
+  .referenceHero{height:480px;min-height:480px}
+  .heroCenter{width:94%;padding:0 10px}
+  .heroCenter h1{font-size:clamp(42px,10vw,58px);margin:14px auto 22px}
+  .heroCenter small{font-size:9px;letter-spacing:.26em}
+  .heroDots{bottom:18px}
+  .rollingStrip{--rolling-gap:12px;--rolling-visible:2;padding:12px 0 24px}
+  .rollingImage{flex-basis:calc((100vw - 24px - var(--rolling-gap)) / 2);aspect-ratio:4/3}
+  .careerFormActions{grid-template-columns:1fr}
+}
+@media(max-width:440px){
+  .referenceHero{height:440px;min-height:440px}
+  .heroCenter h1{font-size:39px}
+  .rollingStrip{--rolling-visible:1;padding-bottom:22px}
+  .rollingImage{flex-basis:calc(100vw - 24px);aspect-ratio:4/3}
+}
