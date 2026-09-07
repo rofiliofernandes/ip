@@ -32,3 +32,51 @@
 @media(max-width:1000px){.manualUploadGrid{grid-template-columns:1fr 1fr}.manualUploadGrid>.btn{width:100%}.distributionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.rollingImage{flex-basis:calc((100% - 6px)/2)}}
 @media(max-width:700px){.brandLogo{min-width:130px}.brandLogo img{width:92px;height:44px}.rollingStrip{padding:42px 0 52px}.rollingTrack{gap:8px}.rollingImage{flex-basis:calc((100% - 8px)/2);aspect-ratio:4/3}.rollingImage img{object-fit:contain}.manualUploadGrid{grid-template-columns:1fr}.manualUploadGrid>.btn{min-height:48px}.distributionGrid{grid-template-columns:1fr}.distributionCard{padding:15px}.slotSummary{display:grid;grid-template-columns:1fr 1fr}.slotSummary>div{min-width:0}.adminGalleryPreview{grid-template-columns:repeat(2,1fr)}.footerBottomNew{grid-template-columns:1fr;justify-items:center}.footerBrand,.footerNav,.footerSocials{justify-self:center}.footerSocials{justify-content:center}.footerInfo{text-align:center}.footerInfoCol{display:flex;flex-direction:column;align-items:center}.careerMain h2{font-size:34px}}
 @media(max-width:440px){.rollingImage{flex-basis:100%;aspect-ratio:16/9}.adminGalleryPreview{grid-template-columns:1fr}.brandLogo img{width:84px}}
+
+/* V3 improvements */
+[data-theme="light"]{--bg:#f7f4eb;--panel:#fffdf8;--panel2:#f0ece2;--text:#202326;--muted:#687176;--line:#d6d0c5;--soft:#6f767a}
+[data-theme="light"] body{background:var(--bg);color:var(--text)}
+[data-theme="light"] .siteHeader{background:#f7f4ebee;border-bottom-color:#20232618}
+[data-theme="light"] .desktopNav a{color:#4f565a}
+[data-theme="light"] .desktopNav a:hover,[data-theme="light"] .navActive{color:#111!important}
+[data-theme="light"] .mobileMenuBtn,[data-theme="light"] .themeToggle{color:#202326}
+[data-theme="light"] .themeSwitch{border-color:#202326}
+[data-theme="light"] .themeSwitch i{background:#202326}
+[data-theme="light"] .rollingStrip{background:#11161a}
+[data-theme="light"] .admin{background:#f4f1e9;color:#202326}
+[data-theme="light"] .admin aside{background:#fffdf8;border-color:#d6d0c5}
+[data-theme="light"] .admin aside button,[data-theme="light"] .admin .brand{color:#3d4448}
+[data-theme="light"] .admin aside button.active{background:#e9e4d9;color:#111}
+[data-theme="light"] .adminMain .panel{background:#fffdf8;border-color:#d6d0c5}
+[data-theme="light"] .admin .input,[data-theme="light"] .admin select{background:#f8f6f0;color:#202326;border-color:#d6d0c5}
+[data-theme="light"] .admin .btn.outline{background:#fffdf8;color:#202326;border-color:#a9a39a}
+[data-theme="light"] .admin .muted{color:#687176}
+[data-theme="light"] .adminTop h1,[data-theme="light"] .adminTop small{color:#202326}
+[data-theme="light"] .brandLogo img,[data-theme="light"] .footerBrand img{filter:none}
+[data-theme="dark"] .brandLogo img,[data-theme="dark"] .footerBrand img{filter:brightness(0) invert(1)}
+[data-theme="light"] .referenceButton.dark{background:#111;color:#fff}
+
+/* Keep the photography strip compact, slightly taller than the original, and never crop the source image. */
+.rollingStrip{padding:44px 0 56px}
+.rollingViewport{width:100%;overflow:hidden}
+.rollingImage{aspect-ratio:16/9;overflow:hidden;background:#151c21}
+.rollingImage img{width:100%;height:100%;object-fit:contain;display:block}
+@media(max-width:1000px){.rollingImage{aspect-ratio:16/9}}
+@media(max-width:700px){.rollingStrip{padding:34px 0 44px}.rollingImage{aspect-ratio:16/9}.rollingImage img{object-fit:contain}}
+
+/* Clean, unobtrusive admin feedback instead of browser alerts. */
+.adminNotice{position:fixed;top:22px;right:22px;z-index:1000;width:min(430px,calc(100vw - 32px));display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:16px 18px;border:1px solid #465159;border-radius:14px;background:#151b20;color:#f5f7f8;box-shadow:0 18px 50px #0007}
+.adminNotice.error{border-color:#9b5555}.adminNotice.success{border-color:#557e69}
+.adminNotice>div{display:grid;gap:3px}.adminNotice b{font-size:14px}.adminNotice span{font-size:14px;line-height:1.5;color:#cbd2d5}.adminNotice button{border:0;background:transparent;color:#cbd2d5;font-size:24px;line-height:1;cursor:pointer;padding:0 2px}
+[data-theme="light"] .adminNotice{background:#fffdf8;color:#202326;border-color:#c8c1b5;box-shadow:0 18px 50px #0002}.adminNotice.success b{color:#9dd2b2}.adminNotice.error b{color:#ffaaaa}
+.adminInlineError{margin-top:16px;padding:13px 15px;border:1px solid #8e5050;border-radius:12px;background:#241719;display:grid;gap:3px}.adminInlineError b{color:#ffb1b1;font-size:14px}.adminInlineError span{color:#d8c7c7;font-size:13px;line-height:1.5}
+.distributionCard.hasIssue{border-color:#8e5050!important}.distributionCard.hasIssue small{color:#ffaaaa}
+[data-theme="light"] .adminInlineError{background:#fff2f0;border-color:#d8a6a0}.distributionCard.hasIssue{box-shadow:inset 0 0 0 1px #8e5050}
+
+/* Hero quality: never apply a blur filter; keep the readability overlay separate from the photo. */
+.heroSlide{filter:none!important;image-rendering:auto;transform:translateZ(0);backface-visibility:hidden}
+.heroOverlay{backdrop-filter:none!important}
+
+@media(max-width:600px){.adminNotice{top:12px;right:12px;width:calc(100vw - 24px)}}
+
+.themeSwitch{position:relative}.themeSwitch i{transition:transform .22s ease}.themeSwitch.on i{transform:translateX(18px)}.themeSwitch.off i{transform:translateX(0)}
