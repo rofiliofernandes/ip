@@ -80,3 +80,70 @@
 @media(max-width:600px){.adminNotice{top:12px;right:12px;width:calc(100vw - 24px)}}
 
 .themeSwitch{position:relative}.themeSwitch i{transition:transform .22s ease}.themeSwitch.on i{transform:translateX(18px)}.themeSwitch.off i{transform:translateX(0)}
+
+/* V4 — theme readability, logo positioning, and Careers salary control */
+/* Header logo: slightly larger, readable, and anchored near the true top-left edge. */
+.siteHeader .referenceWrap.nav{width:100%;max-width:none;margin:0;padding-left:28px;padding-right:28px}
+.siteHeader .brandLogo{min-width:0;align-items:flex-start;justify-content:center}
+.siteHeader .brandLogo img{width:132px;height:58px;object-fit:contain;object-position:left center}
+[data-theme="dark"] .siteHeader .brandLogo img,[data-theme="dark"] .footerBrand img{filter:brightness(0) invert(1)}
+[data-theme="light"] .siteHeader .brandLogo img,[data-theme="light"] .footerBrand img{filter:none}
+
+/* Theme control: explicit state, visible track, and reliable knob movement. */
+.themeToggle{position:relative;z-index:2;min-height:36px}
+.themeToggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+.themeSwitch{flex:none;position:relative;overflow:hidden;background:transparent}
+.themeSwitch i{position:relative;transform:translateX(0)!important}
+.themeSwitch.on i{transform:translateX(18px)!important}
+.themeSwitch.off i{transform:translateX(0)!important}
+
+/* Strong, theme-aware admin contrast. */
+[data-theme="light"] .admin,
+[data-theme="light"] .adminMain{color:#202326}
+[data-theme="light"] .admin .panel,
+[data-theme="light"] .admin .stat,
+[data-theme="light"] .admin .listItem{color:#202326}
+[data-theme="light"] .admin .panel h2,
+[data-theme="light"] .admin .panel h3,
+[data-theme="light"] .admin .panel b,
+[data-theme="light"] .admin .stat b,
+[data-theme="light"] .admin .listItem b,
+[data-theme="light"] .admin .careerListItem b{color:#202326}
+[data-theme="light"] .admin .muted,
+[data-theme="light"] .admin .stat span,
+[data-theme="light"] .admin .listItem span,
+[data-theme="light"] .admin .careerFormGrid label,
+[data-theme="light"] .admin .curation label,
+[data-theme="light"] .admin .manualUploadGrid label,
+[data-theme="light"] .admin .videoForm label{color:#555e63}
+[data-theme="light"] .admin .input::placeholder,
+[data-theme="light"] .admin select::placeholder{color:#6a7277;opacity:1}
+[data-theme="light"] .admin .adminTop h1{color:#202326}
+[data-theme="light"] .admin .adminTop small{color:#8b6734}
+[data-theme="light"] .admin aside button{color:#4b5358}
+[data-theme="light"] .admin aside button.active,
+[data-theme="light"] .admin aside button:hover{color:#16191b}
+[data-theme="light"] .admin .pill{color:#4b5358;border-color:#c9c3b8}
+[data-theme="light"] .admin .distributionCard>div:first-child span,
+[data-theme="light"] .admin .selectionGrid button{color:#202326}
+[data-theme="light"] .admin .distributionCard small{color:#5c6468}
+[data-theme="light"] .admin .slotSummary span{color:#5c6468}
+[data-theme="light"] .admin .btn.outline{color:#202326;background:#fffdf8;border-color:#aaa39a}
+
+/* Premium salary disclosure control. The native checkbox remains accessible but is visually replaced. */
+.salaryToggle{position:relative;display:inline-flex!important;align-items:center;gap:10px!important;width:max-content;cursor:pointer;color:var(--ink)!important;font-size:13px!important;user-select:none}
+.salaryToggle input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.salarySwitch{position:relative;width:48px;height:28px;flex:none;border:1px solid #66727a;border-radius:999px;background:#222b31;box-shadow:inset 0 1px 2px #0005;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.salarySwitch i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#f4f5f5;box-shadow:0 2px 5px #0005;transition:transform .22s ease}
+.salaryToggle input:checked + .salarySwitch{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.salaryToggle input:checked + .salarySwitch i{transform:translateX(20px);background:#171b1e}
+.salaryToggle input:focus-visible + .salarySwitch{outline:2px solid var(--accent);outline-offset:3px}
+[data-theme="light"] .salarySwitch{background:#ded9cf;border-color:#aaa39a}
+[data-theme="light"] .salaryToggle input:checked + .salarySwitch{background:#9a7640;border-color:#9a7640}
+[data-theme="light"] .salaryToggle input:checked + .salarySwitch i{background:#fff}
+
+@media(max-width:700px){
+  .siteHeader .referenceWrap.nav{padding-left:14px;padding-right:14px}
+  .siteHeader .brandLogo img{width:108px;height:50px}
+}
+@media(max-width:440px){.siteHeader .brandLogo img{width:100px;height:46px}}
