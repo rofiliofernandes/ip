@@ -87,7 +87,7 @@ The exact Meta/Instagram account type and permissions must be configured in Meta
 
 ## Production admin hostname
 
-Set the Worker variable `ADMIN_HOST` to the exact admin hostname, for example `manage.impressionphotography.com`. When set, public-host requests to `/admin` and admin APIs return 404; the separate hostname is intended to be protected with Cloudflare Access.
+For testing, `ADMIN_HOST` may be the current Worker hostname. For production, set it to the exact management hostname, for example `manage.impressionphotography.com`. When set, public-host requests to `/admin` and admin APIs return 404; protect the separate hostname with Cloudflare Access. Do not commit a real owner email to Git: set `ADMIN_OWNER_EMAIL` as a Cloudflare Worker variable/secret configuration value.
 
 ## Videos
 
@@ -119,6 +119,14 @@ The first Owner account is created through email verification rather than a setu
 - `ADMIN_OWNER_EMAIL` — Text variable containing the authorized email address (or comma-separated list) allowed to initialize the first Owner account. Email verification alone is not sufficient to claim a fresh installation.
 - `TOKEN_ENCRYPTION_KEY` — Secret used only to encrypt Instagram access tokens. Keep it separate from `SESSION_SECRET`. Existing tokens encrypted with the legacy session secret can still be read and will be re-encrypted with the new key when refreshed.
 
-Open `/admin/setup`. The flow is: enter email → receive a 6-digit code → verify the email → enter name, password and confirm password. The verification code expires after 10 minutes and has a maximum of five attempts. The verified setup session expires after 15 minutes. Once an Owner exists, first-time setup is disabled.
+Open `/admin/setup`. The flow is: enter email → receive a 6-digit code → verify the email → enter name, password and confirm password. The verification code expires after 10 minutes and has a maximum of five attempts. The verified setup session expires after 15 minutes. Once an Owner exists, first-time setup is disabled. `ADMIN_OWNER_EMAIL` is intentionally not committed to `wrangler.toml`; set it in Cloudflare so the real owner email is not exposed in Git.
 
 `ADMIN_SETUP_TOKEN` is no longer used by the application and can be removed from the Worker secrets after deploying this version. `ADMIN_HOST` should be set to the admin hostname. For production, use a separate hostname such as `manage.example.com` and protect it with Cloudflare Access; the bundled test configuration uses the Worker hostname so the admin can be tested immediately.
+
+## Reliability hardening
+
+The upload workflow records successful R2 uploads and periodically cleans up uploaded objects that never receive a matching D1 photo record. Server-side admin inputs have length/type bounds, authenticated state-changing admin requests validate their Origin/Referer when supplied, and successful logins clear their temporary rate-limit counters.
+
+### Reliability migration
+
+Migration `0008_reliability_hardening.sql` adds upload completion tracking so scheduled cleanup can remove R2 objects that were uploaded successfully but never received a matching D1 photo record. Apply all migrations with `npm run db:migrate` before testing uploads.

@@ -23,3 +23,6 @@ Known deployment requirements:
 - Keep `SESSION_SECRET` as a strong random Secret.
 - Keep `RESEND_API_KEY` and `RESEND_FROM_EMAIL` configured for setup emails.
 - Apply migration `0007_security_hardening.sql` before using upload/rate-limit features.
+
+
+Additional hardening: upload_nonces now tracks uploaded_at for orphan cleanup; photo finalization cleans R2 on D1 failure; admin write inputs have server-side bounds; state-changing admin requests validate same-origin headers when present; successful logins clear temporary throttles.

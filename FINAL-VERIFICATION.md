@@ -1,23 +1,39 @@
-# Final Verification — Footer, Reviews, Image Fit
+# Final Verification — Impression Photography
 
-## Implemented
-- Gallery/Instagram thumbnails preserve the complete source photograph inside the existing box using `object-fit: contain`, with a blurred image backdrop so portrait images do not get cropped or force the grid to grow.
-- Homepage Google reviews are no longer hard-coded sample testimonials.
-- Reviews are fetched from Google Places through `/api/reviews` and filtered to 4-star and 5-star only.
-- Review cards are larger and automatically rotate.
-- Reviewer attribution and a Google Maps source link are included.
-- Footer now has a full-width Google map, address, phone, office timing, location link, social links and dark styling.
-- Floating WhatsApp button opens a chat panel; the panel's Open chat button uses the official WhatsApp click-to-chat URL.
-- No new D1 migration is required for these changes.
+## Applied hardening
 
-## Required deployment setting
-Set the Google Places API key:
+- First Owner setup remains email-verification based and requires `ADMIN_OWNER_EMAIL`; email ownership alone cannot claim a fresh installation.
+- `ADMIN_SETUP_TOKEN` is not used by the application.
+- `ADMIN_HOST` remains explicitly configured in the test `wrangler.toml`; production should use a dedicated management hostname.
+- Admin state-changing API requests validate same-origin `Origin`/`Referer` headers when supplied.
+- Successful login clears temporary login rate-limit counters.
+- Admin service/video/photo inputs have server-side size/type/range validation.
+- R2 upload authorization remains single-use and binds method, key, size, content type, expiry and nonce.
+- Upload byte count is checked from the received body.
+- Successful R2 uploads are recorded with `uploaded_at`; scheduled cleanup removes stale uploaded objects with no matching D1 photo record.
+- Photo finalization cleans up the R2 object and quota reservation if D1 finalization fails.
+- Instagram status is admin-only.
+- Instagram token encryption can use a separate `TOKEN_ENCRYPTION_KEY`.
+- Session cleanup and stale auth/upload records are scheduled.
+- Script CSP does not include `unsafe-inline`.
 
-`npx wrangler secret put GOOGLE_PLACES_API_KEY`
+## Verification performed in this environment
 
-The default place ID is `ChIJmeK4XLzBvzsR5X9N1oBatPc`.
+- `wrangler.toml` parsed successfully with Python TOML parser.
+- Migration `0008_reliability_hardening.sql` was executed successfully against a SQLite test schema.
+- No stale `ADMIN_SETUP_TOKEN` reference remains in application source/config examples.
+- TypeScript parser reports no syntax diagnostics in the edited Worker; full type-check cannot complete here because npm dependencies are not installed.
+- A fresh npm dependency installation was attempted but the environment could not complete registry resolution within the execution window, so no claim is made that `npm audit` or `npm run build` passed in this environment.
+- No `package-lock.json` is included because it could not be generated without resolving the dependency tree.
 
-## Validation
-- TypeScript parser check completed with no TS1005/TS1109/TS1128/TS1161/TS17008/TS1382/TS1434 syntax diagnostics.
-- ZIP archive integrity checked with `unzip -t` before delivery.
-- Full Vite production build was not run because dependencies are not installed in the sandbox.
+## Required deployment configuration
+
+Set these in Cloudflare Worker settings rather than committing real values:
+
+- `ADMIN_OWNER_EMAIL` — Text; authorized first Owner email(s), comma-separated if needed.
+- `RESEND_API_KEY` — Secret.
+- `RESEND_FROM_EMAIL` — Text; address/domain verified in Resend.
+- `SESSION_SECRET` — Secret, at least 32 random characters.
+- `TOKEN_ENCRYPTION_KEY` — Secret, strongly random; separate from `SESSION_SECRET`.
+
+Apply all D1 migrations before testing uploads.
