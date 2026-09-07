@@ -221,3 +221,43 @@ body:has(.referenceHome) .mobileMenu{top:66px}
 .passwordField{position:relative}.passwordField .input{padding-right:70px}.passwordToggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;padding:6px}.passwordToggle:hover{color:var(--ink)}.passwordHint{font-size:12px;margin:-4px 0 2px}
 
 .passwordMatch{color:#8fd3a6}.passwordMismatch{color:#e79a9a}
+
+/* Admin usability: rectangular rounded buttons + mobile-first layout */
+.admin .btn{border-radius:10px}
+.listActions{display:flex;align-items:center;gap:8px}
+.listActions .btn{padding:8px 12px;font-size:12px}
+.iconDanger{background:transparent;border:0;color:#ff9b9b;cursor:pointer;padding:8px;border-radius:8px;display:grid;place-items:center}
+@media(max-width:900px){
+  .admin{display:block;min-height:100vh}
+  .admin aside{position:sticky;top:0;z-index:25;display:flex;flex-direction:row;align-items:center;overflow-x:auto;gap:6px;padding:8px;border-right:0;border-bottom:1px solid var(--line);white-space:nowrap}
+  .admin aside .brand{display:none}
+  .admin aside button,.admin aside button.active,.admin aside button:last-child,.admin aside .adminBack{display:flex!important;flex:0 0 auto;margin:0;padding:9px 11px;border-radius:9px;white-space:nowrap}
+  .admin aside .adminBack{color:var(--muted);align-items:center;gap:8px}
+  .adminMain{padding:18px 14px;max-width:none}
+  .adminTop{align-items:flex-start;gap:12px;margin-bottom:18px}
+  .adminTop h1{font-size:34px}
+  .curation{align-items:stretch}
+  .curation>div:first-child{width:100%;margin-right:0}
+  .curation label{min-width:0;flex:1 1 45%}
+  .upload{flex-wrap:wrap;gap:10px}
+  .upload>*{min-width:0;max-width:100%}
+  .upload .btn{flex:1 1 calc(50% - 5px);justify-content:center}
+  .upload .manualPhotoUrl{flex:1 1 100%}
+  .instagramLinkBox{max-width:none;flex:1 1 100%}
+  .photoGrid,.recommend{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .serviceAdminForm{grid-template-columns:1fr}
+  .videoForm{grid-template-columns:1fr}
+  .videoNote{grid-column:auto}
+}
+@media(max-width:560px){
+  .adminMain{padding:16px 10px}
+  .adminTop h1{font-size:30px}
+  .adminTopActions{gap:8px}
+  .adminTopActions .pill{font-size:11px}
+  .curation{padding:16px}
+  .photoGrid,.recommend{grid-template-columns:1fr}
+  .upload .btn{flex:1 1 100%}
+  .listItem{align-items:flex-start;gap:12px}
+  .listActions{width:100%;justify-content:flex-end}
+  .listItem span{overflow-wrap:anywhere}
+}
