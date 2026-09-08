@@ -420,3 +420,25 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
   .rollingStrip{--rolling-visible:1;padding-bottom:22px}
   .rollingImage{flex-basis:calc(100vw - 24px);aspect-ratio:4/3}
 }
+
+/* V7 — preserve complete photographs in the three-image homepage carousel. */
+.rollingImage{background:#10161a;display:flex;align-items:center;justify-content:center}
+.rollingImage img{width:100%;height:100%;object-fit:contain!important;object-position:center;display:block;transform:none!important}
+
+/* V7 — keep dark admin controls/cards readable with clean white text. */
+[data-theme="light"] .admin .filePick>span,
+html:not([data-theme="dark"]) .admin .filePick>span{color:#fff!important}
+[data-theme="light"] .admin .slotSummary>div b,
+html:not([data-theme="dark"]) .admin .slotSummary>div b{color:#fff!important}
+[data-theme="light"] .admin .slotSummary>div span,
+html:not([data-theme="dark"]) .admin .slotSummary>div span{color:#fff!important}
+[data-theme="light"] .admin .distributionCard>div:first-child span,
+html:not([data-theme="dark"]) .admin .distributionCard>div:first-child span{color:#fff!important}
+[data-theme="light"] .admin .distributionCard>div:first-child b,
+html:not([data-theme="dark"]) .admin .distributionCard>div:first-child b{color:#fff!important}
+
+/* Keep the image-selection controls themselves dark with white labels/checkmarks. */
+[data-theme="light"] .admin .selectionGrid button,
+html:not([data-theme="dark"]) .admin .selectionGrid button{background:#12191e;color:#fff}
+[data-theme="light"] .admin .selectionGrid button span,
+html:not([data-theme="dark"]) .admin .selectionGrid button span{color:#fff!important}
