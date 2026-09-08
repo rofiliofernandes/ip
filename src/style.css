@@ -581,3 +581,20 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 }
 
 [data-theme="light"] .rollingStrip{background:#f1ede3!important;color:#202326!important}
+
+/* V10 follow-up — custom confirmations, clean login contrast, and Careers actions. */
+.confirmBackdrop{position:fixed;inset:0;z-index:2000;background:rgba(4,7,9,.68);backdrop-filter:blur(5px);display:grid;place-items:center;padding:20px}
+.confirmModal{position:relative;width:min(520px,calc(100vw - 32px));background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:30px;box-shadow:0 28px 90px rgba(0,0,0,.45)}
+.confirmClose{position:absolute;right:16px;top:14px;width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:25px;cursor:pointer}.confirmClose:hover{background:var(--panel2);color:var(--text)}
+.confirmEyebrow{font-size:10px;letter-spacing:.24em;font-weight:800;color:var(--accent);margin-bottom:8px}.confirmModal h2{font:600 32px/1.1 'Playfair Display',serif;margin:0 40px 12px 0;color:var(--text)}.confirmModal p{margin:0;color:var(--muted);font-size:15px;line-height:1.65}.confirmActions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.dangerButton{background:#b84444;color:#fff;border:1px solid #d66b6b}.dangerButton:hover{background:#c94d4d}
+.careerFormActions{display:grid!important;grid-template-columns:minmax(0,350px) minmax(0,350px)!important;justify-content:space-between;gap:10px;margin-top:18px}.careerFormActions>.btn{width:100%;min-height:46px}.careerFormActions>.googleFormButton{grid-column:2;grid-row:1}.careerFormActions>.btn:first-child{grid-column:1;grid-row:1}.careerFormActions>.btn:last-child:not(.googleFormButton){grid-column:1;grid-row:2}
+
+/* Login: make the authentication surface readable even before a theme attribute exists. */
+.login{background:#eeeae1}.login .panel{background:#151c21;color:#f5f7f8;border-color:#303b42;box-shadow:0 24px 70px rgba(20,24,28,.28)}.login .panel h2{color:#f5f7f8!important}.login .panel small{color:#e5c38d!important}.login .panel .muted,.login .panel .setupLink{color:#c2cbd0!important}.login .input{background:#0f1519!important;color:#fff!important;border-color:#3b474e!important}.login .input::placeholder{color:#9da8ae!important;opacity:1}.login .passwordToggle{color:#fff!important;background:#1b242a;border:1px solid #435059;border-radius:7px;padding:5px 8px;font-weight:700}.login .passwordToggle:hover{background:#26323a}.login .btn.light{background:#f4f5f5;color:#11161a}
+[data-theme="dark"] .login{background:#080c0f}.login .panel .errorText{color:#ffb0b0!important}
+[data-theme="light"] .login{background:#eeeae1!important}.login .panel{transition:background .2s ease,color .2s ease,border-color .2s ease}.login .panel input{caret-color:var(--accent)}
+
+/* The new logo is square; keep its full artwork visible instead of stretching it. */
+.siteHeader .brandLogo img,.footerBrand img{object-fit:contain;object-position:center;width:68px;height:58px}
+
+@media(max-width:700px){.careerFormActions{grid-template-columns:1fr!important}.careerFormActions>.btn:first-child,.careerFormActions>.googleFormButton,.careerFormActions>.btn:last-child:not(.googleFormButton){grid-column:1;grid-row:auto}.confirmModal{padding:26px 22px}.confirmActions{display:grid;grid-template-columns:1fr 1fr}.confirmActions .btn{width:100%}}
