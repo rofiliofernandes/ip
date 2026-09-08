@@ -442,3 +442,16 @@ html:not([data-theme="dark"]) .admin .distributionCard>div:first-child b{color:#
 html:not([data-theme="dark"]) .admin .selectionGrid button{background:#12191e;color:#fff}
 [data-theme="light"] .admin .selectionGrid button span,
 html:not([data-theme="dark"]) .admin .selectionGrid button span{color:#fff!important}
+
+/* FIX — rolling strip: each photo keeps its own aspect ratio at a fixed row height.
+   No object-fit:contain (which padded mismatched ratios with a dark background =
+   the black bars), no object-fit:cover crop. Width is simply "auto" per image, so
+   the browser renders each photo at its true proportions. */
+.rollingStrip{--rolling-h:300px}
+.rollingViewport{overflow:hidden;width:100%}
+.rollingTrack{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;width:max-content!important;gap:var(--rolling-gap,10px)!important}
+.rollingImage{flex:0 0 auto!important;width:auto!important;height:var(--rolling-h)!important;aspect-ratio:auto!important;background:transparent!important;display:block!important}
+.rollingImage img{width:auto!important;height:100%!important;max-width:none!important;object-fit:cover!important;object-position:center!important;display:block!important;transform:none!important}
+@media(max-width:1000px){.rollingStrip{--rolling-h:230px}}
+@media(max-width:700px){.rollingStrip{--rolling-h:190px}}
+@media(max-width:440px){.rollingStrip{--rolling-h:160px}}
