@@ -501,3 +501,83 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
  .youtubeNav{position:static;grid-column:1/-1;grid-row:3}
  .youtubeNav button{width:38px;height:38px}
 }
+
+/* V7/V9 requested fixes: section layering, admin contrast, invitations, and login UX. */
+[data-theme="light"] .referenceIntro{background:#ece8de!important;color:#202326!important}
+[data-theme="light"] .referenceGallery{background:#f3efe6!important;color:#202326!important}
+[data-theme="light"] .youtubeGallery{background:#f7f4eb!important;color:#202326!important}
+[data-theme="light"] .instagramReels{background:#efeae0!important;color:#202326!important}
+[data-theme="light"] .testimonials{background:#ebe6dc!important;color:#202326!important}
+[data-theme="light"] .referenceIntro .introCopy h2,
+[data-theme="light"] .referenceGallery .referenceSectionHead h2,
+[data-theme="light"] .youtubeGallery .referenceSectionHead h2,
+[data-theme="light"] .instagramReels .referenceSectionHead h2,
+[data-theme="light"] .testimonials .referenceSectionHead h2{color:#202326!important}
+[data-theme="light"] .referenceIntro .introCopy p,
+[data-theme="light"] .youtubeGallery .referenceSectionHead p,
+[data-theme="light"] .instagramReels .referenceSectionHead p{color:#596267!important}
+[data-theme="light"] .youtubeGallery .referenceVisit,
+[data-theme="light"] .instagramReels .referenceVisit{color:#202326!important}
+[data-theme="light"] .instagramReels .referenceEmpty,
+[data-theme="light"] .youtubeGallery .referenceEmpty{background:#e8e3d9!important;border-color:#c9c2b7!important;color:#596267!important}
+[data-theme="light"] .youtubeGallery .youtubeCard{background:#fffdf8!important;color:#202326!important;border-color:#d6d0c5!important}
+[data-theme="light"] .instagramReels .reelCard{background:#f8f5ee!important;color:#202326!important;border-color:#d6d0c5!important}
+[data-theme="light"] .instagramReels .reelCaption{color:#394146!important}
+[data-theme="light"] .testimonials .testimonial{background:#f8f5ee!important;color:#202326!important;border-color:#d1cbc0!important}
+[data-theme="light"] .galleryNoPhotos{background:#f3efe6!important;color:#596267!important}
+
+/* Dark controls use clean white text; light-mode cards retain their readable dark text. */
+[data-theme="dark"] .filePick>span,
+[data-theme="dark"] .slotSummary>div,
+[data-theme="dark"] .slotSummary b,
+[data-theme="dark"] .slotSummary span,
+[data-theme="dark"] .distributionCard>div:first-child span,
+[data-theme="dark"] .distributionCard>div:first-child b,
+[data-theme="dark"] .distributionCard small,
+[data-theme="dark"] .selectionGrid button{color:#fff!important}
+[data-theme="dark"] .slotSummary>div{background:#162027!important}
+[data-theme="dark"] .distributionCard{background:#12191e!important}
+[data-theme="dark"] .filePick>span{background:#162027!important}
+
+/* Stronger login contrast in both themes. */
+.login .panel h2{color:var(--text)!important}
+.login .panel small{color:var(--accent)!important}
+.login .panel .muted,.login .panel .setupLink{color:var(--muted)!important}
+.login .input{color:var(--text)!important;background:var(--panel2)!important}
+.login .passwordToggle{color:var(--text)!important;font-size:12px;font-weight:700}
+[data-theme="light"] .login{background:#eeeae1!important}
+[data-theme="light"] .login .panel{background:#fffdf8!important;color:#202326!important;border-color:#cfc8bc!important;box-shadow:0 18px 45px rgba(20,24,28,.10)}
+[data-theme="light"] .login .panel h2{color:#202326!important}
+[data-theme="light"] .login .panel small{color:#8b6734!important}
+[data-theme="light"] .login .panel .muted,[data-theme="light"] .login .panel .setupLink{color:#596267!important}
+[data-theme="light"] .login .input{background:#f5f2eb!important;color:#202326!important;border-color:#c8c1b5!important}
+[data-theme="light"] .login .input::placeholder{color:#687177!important;opacity:1}
+
+/* Error notices must remain readable instead of washed out. */
+.adminNotice.error{background:#241719;color:#fff;border-color:#c06a6a}
+.adminNotice.error b{color:#ffb4b4!important}
+.adminNotice.error span{color:#f0dddd!important}
+.adminNotice.error button{color:#fff!important}
+[data-theme="light"] .adminNotice.error{background:#fff3f1!important;border-color:#cf8c84!important;color:#202326!important;box-shadow:0 18px 50px rgba(45,30,25,.14)}
+[data-theme="light"] .adminNotice.error b{color:#b63e3e!important}
+[data-theme="light"] .adminNotice.error span{color:#4b3d3a!important}
+[data-theme="light"] .adminNotice.error button{color:#5b4a46!important}
+
+/* Owner admin-management UI. */
+.adminInvitePanel{display:grid;gap:14px}
+.adminInviteForm{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:10px;align-items:center}
+.adminInviteLimit{margin:0;font-size:13px}
+.adminAccountItem{align-items:center}
+.adminAccountItem>div{min-width:0}
+.adminAccountItem .iconDanger{flex:0 0 auto}
+.adminAccountItem span:last-child{font-size:12px}
+.inviteSetupPanel{display:grid;gap:12px}
+.inviteField{display:grid;gap:6px;color:var(--muted);font-size:13px}
+.inviteSetupPanel .btn{width:100%}
+
+@media(max-width:700px){
+  .adminInviteForm{grid-template-columns:1fr}
+  .adminAccountItem{align-items:flex-start}
+}
+
+[data-theme="light"] .rollingStrip{background:#f1ede3!important;color:#202326!important}
