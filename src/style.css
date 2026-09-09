@@ -610,3 +610,5 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .galleryTileDots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:3;pointer-events:none}
 .galleryTileDots span{width:6px;height:6px;border-radius:50%;background:#ffffff77;display:block}
 .galleryTileDots span.active{background:#fff}
+.reelCard .reelThumb{width:100%;aspect-ratio:9/16;position:relative;background:#000;overflow:hidden;cursor:pointer}
+.reelCard .reelThumb img{width:100%;height:100%;object-fit:cover;display:block}
