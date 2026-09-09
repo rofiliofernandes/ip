@@ -598,3 +598,15 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .siteHeader .brandLogo img,.footerBrand img{object-fit:contain;object-position:center;width:68px;height:58px}
 
 @media(max-width:700px){.careerFormActions{grid-template-columns:1fr!important}.careerFormActions>.btn:first-child,.careerFormActions>.googleFormButton,.careerFormActions>.btn:last-child:not(.googleFormButton){grid-column:1;grid-row:auto}.confirmModal{padding:26px 22px}.confirmActions{display:grid;grid-template-columns:1fr 1fr}.confirmActions .btn{width:100%}}
+.galleryTile{position:relative}
+.galleryTile .galleryTileImg{position:absolute;inset:0;opacity:0;z-index:1}
+.galleryTile .galleryTileImg.active{opacity:1;z-index:2}
+.galleryTileCount{position:absolute;bottom:10px;right:10px;z-index:3;background:#000000aa;color:#fff;font-size:12px;font-weight:700;padding:4px 9px;border-radius:20px;pointer-events:none}
+.galleryTile.expanded .galleryTileCount{display:none}
+.galleryTileNav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:38px;height:38px;border:0;border-radius:50%;background:#000000aa;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.galleryTileNav:hover{background:#000000cc}
+.galleryTileNav.prev{left:10px}
+.galleryTileNav.next{right:10px}
+.galleryTileDots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:3;pointer-events:none}
+.galleryTileDots span{width:6px;height:6px;border-radius:50%;background:#ffffff77;display:block}
+.galleryTileDots span.active{background:#fff}
