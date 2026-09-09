@@ -76,11 +76,12 @@ function InstagramReels({videos}:{videos:any[]}){
  const onTouchStart=(e:React.TouchEvent)=>{touchStart.current=e.touches[0]?.clientX??null};
  const onTouchEnd=(e:React.TouchEvent)=>{if(touchStart.current===null)return;const dx=(e.changedTouches[0]?.clientX??touchStart.current)-touchStart.current;touchStart.current=null;if(Math.abs(dx)<45)return;go(active+(dx<0?1:-1))};
  const n=items.length;
- const visible=[{i:(active-1+n)%n,side:'prev'},{i:active,side:'active'},{i:(active+1)%n,side:'next'}].map(({i,side})=>({v:items[i],i,side}));
+ const OFFSETS=[-2,-1,0,1,2,3];
+ const visible=OFFSETS.map(off=>{const i=((active+off)%n+n)%n;return {v:items[i],i,side:off===0?'active':'other'}});
  return <section className="referenceSection instagramReels"><div className="referenceWrap"><div className="referenceSectionHead"><div><small>INSTAGRAM</small><h2>Instagram Reels</h2><p>Portrait stories from Instagram.</p></div><a className="referenceVisit" href={INSTAGRAM_URL} target="_blank" rel="noreferrer"><Instagram size={15}/> View on Instagram <ArrowRight size={14}/></a></div>
  <div className="reelCarousel" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
   {visible.map(({v,i,side})=>{const isActive=side==='active';return <article className={`reelCard reelCard-${side}`} key={v.id} onClick={()=>{if(isActive){if(!playing)setPlaying(true)}else{go(i)}}} aria-current={isActive}>
-   {isActive&&playing?<iframe src={`https://www.instagram.com/reel/${v.video_id}/embed/?hidecaption=1`} title={v.title||'Instagram Reel'} allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"/>:<div className="reelThumb">{v.thumbnail_url?<img src={v.thumbnail_url} alt={v.title||'Instagram Reel'} loading="lazy"/>:null}<span className="reelPlayBadge"><Play size={20} fill="currentColor"/></span></div>}
+   {isActive&&playing?<iframe src={`https://www.instagram.com/reel/${v.video_id}/embed/?hidecaption=1`} title={v.title||'Instagram Reel'} allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"/>:<div className="reelThumb">{v.thumbnail_url?<img src={v.thumbnail_url} alt={v.title||'Instagram Reel'} loading="lazy"/>:(v.media_url?<video src={v.media_url} muted playsInline preload="metadata" className="reelPosterVideo"/>:null)}<span className="reelPlayBadge"><Play size={18} fill="currentColor"/></span></div>}
    <div className="reelCaption">{v.title||'Instagram Reel'}</div>
   </article>})}
  </div>

@@ -29,5 +29,5 @@ ADMIN_OWNER_EMAIL = "rofitest8@gmail.com"
 RESEND_FROM_EMAIL = "onboarding@resend.dev"
 
 [triggers]
-crons = ["*/15 * * * *"]
+crons = ["0 0,12 * * *"]
 

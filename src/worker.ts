@@ -94,7 +94,7 @@ async function syncInstagramData(c:any){
       if(isReel){
         const exists=await c.env.DB.prepare('SELECT id FROM videos WHERE source_url=?').bind(item.permalink||'').first();
         if(exists){skipped++;continue}
-        await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order,thumbnail_url) VALUES(?,?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,reelsImported,item.thumbnail_url||item.media_url||'').run();
+        await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order,thumbnail_url,media_url) VALUES(?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,reelsImported,item.thumbnail_url||'',item.media_url||'').run();
         reelsImported++;continue;
       }
       const groupId=item.media_type==='CAROUSEL_ALBUM'?item.id:null;
