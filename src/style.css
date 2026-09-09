@@ -612,3 +612,25 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .galleryTileDots span.active{background:#fff}
 .reelCard .reelThumb{width:100%;aspect-ratio:9/16;position:relative;background:#000;overflow:hidden;cursor:pointer}
 .reelCard .reelThumb img{width:100%;height:100%;object-fit:cover;display:block}
+.reelCarousel{width:min(1200px,calc(100% - 28px));margin:4px auto 0;display:flex;align-items:center;justify-content:center;gap:16px;overflow:hidden;padding:0 0 4px}
+.reelCard{min-width:0;flex:0 0 190px;background:#10171b;color:#fff;border:1px solid #29343a;cursor:pointer;transition:flex-basis .35s ease,opacity .35s ease,transform .35s ease}
+.reelCard-active{flex-basis:270px!important;opacity:1;transform:scale(1)}
+.reelCard-prev,.reelCard-next{opacity:.5;transform:scale(.92)}
+.reelControls{width:min(1200px,calc(100% - 28px));margin:14px auto 0;display:flex;align-items:center;justify-content:center;gap:24px;color:#8a9297;font-size:12px}
+.reelSwipeHint{display:none}
+.reelNav{display:flex;gap:10px}
+.reelNav button{width:44px;height:44px;border:1px solid #29343a;background:#10171b;color:#fff;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.reelNav button:disabled{opacity:.35;cursor:not-allowed}
+.reelThumb{width:100%;height:100%;position:relative;background:linear-gradient(160deg,#232b31,#10171b);display:grid;place-items:center}
+.reelThumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reelPlayBadge{position:relative;z-index:2;width:54px;height:54px;border-radius:50%;background:#fff;color:#171b1e;display:grid;place-items:center;box-shadow:0 8px 22px #0007}
+[data-theme="light"] .instagramReels .reelCard{background:#fffdf8!important;color:#202326!important;border-color:#d6d0c5!important}
+@media(max-width:700px){
+.reelCarousel{width:100%;padding:0 12px;display:block;overflow:hidden;touch-action:pan-y}
+.reelCard-prev,.reelCard-next{display:none!important}
+.reelCard-active{width:min(60vw,260px);margin:0 auto;display:block!important}
+.reelControls{width:calc(100% - 24px);margin-top:12px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;justify-items:center}
+.reelSwipeHint{display:block;grid-column:1/-1;grid-row:2;padding:10px 16px;border-radius:10px;background:#10171b;border:1px solid #29343a;color:#8a9297;text-align:center}
+.reelNav{grid-column:1/-1;grid-row:3}
+.reelNav button{width:38px;height:38px}
+}
