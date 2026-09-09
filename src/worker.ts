@@ -81,7 +81,7 @@ async function syncInstagramData(c:any){
   if(!conn)return {ok:false,error:'Instagram is not connected. Open the Connect Instagram link first.',status:400};
   conn=await refreshInstagramToken(c,conn);
   const version=c.env.INSTAGRAM_GRAPH_VERSION||'v24.0';
-  let endpoint=`https://graph.instagram.com/${version}/${encodeURIComponent(conn.user_id)}/media?fields=id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp,width,height&limit=50&access_token=${encodeURIComponent(conn.access_token)}`;
+  let endpoint=`https://graph.instagram.com/${version}/${encodeURIComponent(conn.user_id)}/media?fields=id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp,width,height,children{media_type,media_url,thumbnail_url,id}&limit=50&access_token=${encodeURIComponent(conn.access_token)}`;
   const serviceRows:any[]=(await c.env.DB.prepare('SELECT title,instagram_hashtags FROM services WHERE active=1 ORDER BY sort_order,id').all()).results;let photosImported=0,reelsImported=0,skipped=0,pages=0;
   while(endpoint&&pages<20){
     const resp=await fetch(endpoint);const data:any=await resp.json();
@@ -95,19 +95,24 @@ async function syncInstagramData(c:any){
         await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order) VALUES(?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,reelsImported).run();
         reelsImported++;continue;
       }
-      if(item.media_type!=='IMAGE'||!item.media_url){skipped++;continue}
-      const exists=await c.env.DB.prepare('SELECT id FROM photos WHERE source=? AND source_id=?').bind('instagram',item.id).first();
-      if(exists){skipped++;continue}
-      if(!c.env.MEDIA){
-        // Keep the Instagram CDN URL for testing/fallback deployments. Production should bind R2 for durable photo storage.
-        await c.env.DB.prepare(`INSERT INTO photos(id,source,source_id,r2_key,image_url,caption,occasion,category,status,published,width,height,bytes,total_score) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),'instagram',item.id,null,item.media_url,item.caption||'',category,category,'pending',0,Number(item.width||0)||null,Number(item.height||0)||null,0,instagramImportedScore(item)).run();
-        photosImported++;continue;
+      const photoCandidates=item.media_type==='CAROUSEL_ALBUM'
+        ?(item.children?.data||[]).filter((ch:any)=>ch.media_type==='IMAGE'&&ch.media_url).map((ch:any)=>({id:ch.id,media_url:ch.media_url,width:item.width,height:item.height}))
+        :(item.media_type==='IMAGE'&&item.media_url?[{id:item.id,media_url:item.media_url,width:item.width,height:item.height}]:[]);
+      if(!photoCandidates.length){skipped++;continue}
+      for(const photo of photoCandidates){
+        const exists=await c.env.DB.prepare('SELECT id FROM photos WHERE source=? AND source_id=?').bind('instagram',photo.id).first();
+        if(exists){skipped++;continue}
+        if(!c.env.MEDIA){
+          // Keep the Instagram CDN URL for testing/fallback deployments. Production should bind R2 for durable photo storage.
+          await c.env.DB.prepare(`INSERT INTO photos(id,source,source_id,r2_key,image_url,caption,occasion,category,status,published,width,height,bytes,total_score) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),'instagram',photo.id,null,photo.media_url,item.caption||'',category,category,'pending',0,Number(photo.width||0)||null,Number(photo.height||0)||null,0,instagramImportedScore(photo)).run();
+          photosImported++;continue;
+        }
+        const img=await fetch(photo.media_url,{cf:{image:{format:'webp',quality:92}} as any});
+        if(!img.ok){skipped++;continue}
+        const buf=await img.arrayBuffer();const bytes=buf.byteLength;const key=`photos/instagram/${photo.id}.webp`;const importedScore=instagramImportedScore({...photo,bytes});const reservationId=uid();
+        if(!(await reserveStorage(c,reservationId,bytes)))return {ok:false,error:'2 GB storage limit reached while importing Instagram photos',status:413,photosImported,reelsImported,skipped};
+        try{await c.env.MEDIA.put(key,buf,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});await c.env.DB.batch([c.env.DB.prepare(`INSERT INTO photos(id,source,source_id,r2_key,image_url,caption,occasion,category,status,published,width,height,bytes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),'instagram',photo.id,key,'/media/'+key,item.caption||'',category,category,'pending',0,Number(photo.width||0)||null,Number(photo.height||0)||null,bytes,importedScore),c.env.DB.prepare('DELETE FROM storage_reservations WHERE id=?').bind(reservationId),c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=MAX(0,reserved_bytes-?) WHERE id=1').bind(bytes)]);photosImported++;}catch{await c.env.MEDIA.delete(key).catch(()=>{});await releaseStorage(c,reservationId);skipped++;}
       }
-      const img=await fetch(item.media_url,{cf:{image:{format:'webp',quality:92}} as any});
-      if(!img.ok){skipped++;continue}
-      const buf=await img.arrayBuffer();const bytes=buf.byteLength;const key=`photos/instagram/${item.id}.webp`;const importedScore=instagramImportedScore({...item,bytes});const reservationId=uid();
-      if(!(await reserveStorage(c,reservationId,bytes)))return {ok:false,error:'2 GB storage limit reached while importing Instagram photos',status:413,photosImported,reelsImported,skipped};
-      try{await c.env.MEDIA.put(key,buf,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});await c.env.DB.batch([c.env.DB.prepare(`INSERT INTO photos(id,source,source_id,r2_key,image_url,caption,occasion,category,status,published,width,height,bytes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),'instagram',item.id,key,'/media/'+key,item.caption||'',category,category,'pending',0,Number(item.width||0)||null,Number(item.height||0)||null,bytes,importedScore),c.env.DB.prepare('DELETE FROM storage_reservations WHERE id=?').bind(reservationId),c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=MAX(0,reserved_bytes-?) WHERE id=1').bind(bytes)]);photosImported++;}catch{await c.env.MEDIA.delete(key).catch(()=>{});await releaseStorage(c,reservationId);skipped++;}
     }
     endpoint=data.paging?.next||'';pages++;
   }
