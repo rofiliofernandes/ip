@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS hashtag_sightings (
+  hashtag TEXT PRIMARY KEY,
+  count INTEGER NOT NULL DEFAULT 1,
+  last_seen TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  sample_caption TEXT DEFAULT '',
+  dismissed INTEGER NOT NULL DEFAULT 0
+);

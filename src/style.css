@@ -647,3 +647,6 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .photoGroupNav.prev{left:8px}
 .photoGroupNav.next{right:8px}
 .photoGroupDelete{position:absolute;top:8px;right:8px;z-index:4;background:#000000aa!important;border-radius:50%;width:28px;height:28px;display:grid;place-items:center}
+.photoLiveBadge{position:absolute;top:8px;left:8px;z-index:4;background:#1f9d55;color:#fff;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 8px;border-radius:20px;pointer-events:none}
+.hashtagsPanel .listItem{flex-wrap:wrap}
+.hashtagsPanel select{min-width:160px}
