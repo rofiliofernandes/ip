@@ -679,3 +679,4 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .filePick.small>span{height:36px;font-size:11px}
 .homepageSectionTabs{margin-bottom:18px}
 .stripSyncNote{font-style:italic;margin-top:-6px}
+.stripSlotsGrid{grid-template-columns:repeat(4,1fr)}
