@@ -65,6 +65,7 @@ function YoutubeGallery({videos}:{videos:any[]}){
  <div className="youtubeControls"><span>{active+1} / {items.length}</span><span className="youtubeSwipeHint">↔ <b>Swipe to change video</b></span><div className="youtubeNav"><button type="button" onClick={()=>go(active-1)} aria-label="Previous video"><ChevronLeft size={22}/></button><button type="button" onClick={()=>go(active+1)} aria-label="Next video"><ChevronRight size={22}/></button></div></div>
  </div></section>}
 
+function ReelPoster({src}:{src:string}){const ref=useRef<HTMLVideoElement>(null);const[failed,setFailed]=useState(false);if(failed)return null;return <video ref={ref} src={src} muted playsInline preload="metadata" className="reelPosterVideo" onLoadedMetadata={()=>{try{if(ref.current)ref.current.currentTime=0.15}catch{}}} onError={()=>setFailed(true)}/>}
 function InstagramReels({videos}:{videos:any[]}){
  const items=videos.map(normalizeVideo).filter(v=>v.platform==='instagram');
  const[active,setActive]=useState(0);
@@ -83,7 +84,7 @@ function InstagramReels({videos}:{videos:any[]}){
  return <section className="referenceSection instagramReels"><div className="referenceWrap"><div className="referenceSectionHead"><div><small>INSTAGRAM</small><h2>Instagram Reels</h2><p>Portrait stories from Instagram.</p></div><a className="referenceVisit" href={INSTAGRAM_URL} target="_blank" rel="noreferrer"><Instagram size={15}/> View on Instagram <ArrowRight size={14}/></a></div>
  <div className="reelCarousel" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
   {visible.map(({v,i,side})=>{const isActive=side==='active';return <article className={`reelCard reelCard-${side}`} key={v.id} onClick={()=>{if(isActive){setLightbox(true)}else{go(i)}}} aria-current={isActive}>
-   <div className="reelThumb">{v.thumbnail_url?<img src={v.thumbnail_url} alt={v.title||'Instagram Reel'} loading="lazy"/>:(v.media_url?<video src={v.media_url} muted playsInline preload="metadata" className="reelPosterVideo"/>:null)}<span className="reelPlayBadge"><Play size={18} fill="currentColor"/></span></div>
+   <div className="reelThumb">{v.thumbnail_url?<img src={v.thumbnail_url} alt={v.title||'Instagram Reel'} loading="lazy"/>:(v.media_url?<ReelPoster src={v.media_url}/>:null)}<span className="reelPlayBadge"><Play size={18} fill="currentColor"/></span></div>
    <div className="reelCaption">{v.title||'Instagram Reel'}</div>
   </article>})}
  </div>
