@@ -650,3 +650,9 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .photoLiveBadge{position:absolute;top:8px;left:8px;z-index:4;background:#1f9d55;color:#fff;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 8px;border-radius:20px;pointer-events:none}
 .hashtagsPanel .listItem{flex-wrap:wrap}
 .hashtagsPanel select{min-width:160px}
+.photoTags{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px 0}
+.photoTagChip{border:1px solid var(--line);background:transparent;color:var(--muted);font-size:11px;padding:3px 9px;border-radius:20px;cursor:pointer}
+.photoTagChip:hover{background:var(--line)}
+.hashtagRow{align-items:flex-start}
+.hashtagActions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hashtagActions .input{width:180px}
