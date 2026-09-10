@@ -613,9 +613,15 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .reelCard .reelThumb{width:100%;aspect-ratio:9/16;position:relative;background:#000;overflow:hidden;cursor:pointer}
 .reelCard .reelThumb img{width:100%;height:100%;object-fit:cover;display:block}
 .reelCarousel{width:min(1500px,calc(100% - 28px));margin:4px auto 0;display:flex;align-items:center;justify-content:center;gap:10px;overflow:hidden;padding:0 0 4px}
-.reelCard{min-width:0;flex:0 0 13%;background:#10171b;color:#fff;border:1px solid #29343a;cursor:pointer;transition:flex-basis .35s ease,opacity .35s ease,transform .35s ease}
-.reelCard-active{flex-basis:15%!important;opacity:1;transform:scale(1);border-color:#e5c38d}
+.reelCard{min-width:0;flex:0 0 16%;background:#10171b;color:#fff;border:1px solid #29343a;cursor:pointer;transition:flex-basis .35s ease,opacity .35s ease,transform .35s ease}
+.reelCard-active{flex-basis:20%!important;opacity:1;transform:scale(1);border-color:#e5c38d}
 .reelCard-other{opacity:.94}
+.reelLightbox{position:fixed;inset:0;z-index:1000;background:#05080aee;display:flex;align-items:center;justify-content:center;gap:18px;padding:24px}
+.reelLightboxInner{width:min(92vw,420px);aspect-ratio:9/16;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px #000a}
+.reelLightboxInner iframe{width:100%;height:100%;border:0;display:block}
+.reelLightboxClose{position:fixed;top:20px;right:24px;z-index:1001;width:42px;height:42px;border-radius:50%;border:1px solid #ffffff33;background:#ffffff14;color:#fff;display:grid;place-items:center;cursor:pointer}
+.reelLightboxNav{width:48px;height:48px;border-radius:50%;border:1px solid #ffffff33;background:#ffffff14;color:#fff;display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
+@media(max-width:700px){.reelLightboxNav{display:none}.reelLightboxInner{width:92vw}}
 .reelControls{width:min(1500px,calc(100% - 28px));margin:14px auto 0;display:flex;align-items:center;justify-content:center;gap:24px;color:#8a9297;font-size:12px}
 .reelSwipeHint{display:none}
 .reelNav{display:flex;gap:10px}
