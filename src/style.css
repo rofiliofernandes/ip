@@ -686,7 +686,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .cropEditorOverlay{position:fixed;inset:0;background:#000000cc;z-index:80;display:grid;place-items:center;padding:20px}
 .cropEditorPanel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(520px,100%);max-height:90vh;overflow:auto}
 .cropEditorPanel h3{margin:0 0 6px}
-.cropEditorFull{position:relative;width:100%;border-radius:10px;overflow:hidden;cursor:crosshair;margin:14px 0;background:#0b1013}
+.cropEditorFull{position:relative;width:100%;border-radius:10px;overflow:hidden;cursor:crosshair;margin:14px 0;background:#0b1013;user-select:none}
+.cropEditorFull.dragging{cursor:grabbing}
 .cropEditorFull img{width:100%;display:block}
 .cropEditorMarker{position:absolute;width:22px;height:22px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #000a,0 0 8px #000;transform:translate(-50%,-50%);pointer-events:none}
 .cropEditorPreviewRow{display:flex;gap:12px;margin-bottom:16px}
