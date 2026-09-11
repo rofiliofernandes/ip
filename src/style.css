@@ -689,7 +689,12 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .cropEditorFull{position:relative;width:100%;border-radius:10px;overflow:hidden;cursor:crosshair;margin:14px 0;background:#0b1013;user-select:none}
 .cropEditorFull.dragging{cursor:grabbing}
 .cropEditorFull img{width:100%;display:block}
-.cropEditorMarker{position:absolute;width:22px;height:22px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #000a,0 0 8px #000;transform:translate(-50%,-50%);pointer-events:none}
+.cropEditorMarker{position:absolute;width:26px;height:26px;transform:translate(-50%,-50%);pointer-events:none;z-index:2}
+.cropEditorMarker::before,.cropEditorMarker::after{content:'';position:absolute;background:var(--accent,#c9a15f);box-shadow:0 0 0 1px #000a}
+.cropEditorMarker::before{left:50%;top:2px;bottom:2px;width:2px;transform:translateX(-50%)}
+.cropEditorMarker::after{top:50%;left:2px;right:2px;height:2px;transform:translateY(-50%)}
+.cropEditorSpotlight{position:absolute;border:2px solid var(--accent,#c9a15f);box-shadow:0 0 0 2000px rgba(0,0,0,.6);pointer-events:none}
+.cropEditorPreviewLabel{font-size:12px;margin:0 0 8px}
 .cropEditorPreviewRow{display:flex;gap:12px;margin-bottom:16px}
 .cropEditorPreview{flex:1;border-radius:10px;overflow:hidden;position:relative;background:#0b1013}
 .cropEditorPreview.square{aspect-ratio:1}
