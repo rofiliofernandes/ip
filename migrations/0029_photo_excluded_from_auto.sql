@@ -1,0 +1,1 @@
+ALTER TABLE photos ADD COLUMN excluded_from_auto INTEGER NOT NULL DEFAULT 0;
