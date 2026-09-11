@@ -750,7 +750,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .testimonialCarousel.hide{opacity:0;transform:translateY(6px)}
 .testimonialCarousel.show{opacity:1;transform:translateY(0)}
 .testimonialCard{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--panel);display:flex;flex-direction:column;gap:8px}
-.testimonialCardHead{display:flex;align-items:center;gap:10px}
+.testimonialCardHead{display:flex;align-items:center;gap:10px;position:relative}
+.testimonialCardG{margin-left:auto;display:flex}
 .testimonialCardHead .avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;flex:0 0 auto}
 .testimonialCardHead b{display:block;font-size:14px}
 .testimonialCardHead .muted{font-size:11px}
