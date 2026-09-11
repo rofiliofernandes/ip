@@ -710,6 +710,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .gallerySlotAdd{aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;font-size:13px}
 .segmented.small button{padding:7px 10px;font-size:12px}
 .selectionGrid.small{grid-template-columns:repeat(4,1fr);max-height:220px;overflow-y:auto;gap:6px}
+.selectionGrid.wide{grid-template-columns:repeat(8,1fr);max-height:340px}
+@media(max-width:900px){.selectionGrid.wide{grid-template-columns:repeat(5,1fr)}}
 .filePick.small>span{height:36px;font-size:11px}
 .homepageSectionTabs{margin-bottom:18px}
 .stripSyncNote{font-style:italic;margin-top:-6px}
