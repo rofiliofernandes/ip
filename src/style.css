@@ -744,7 +744,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .reviewsBadgeWord{font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--muted)}
 .reviewsStars{color:#f5b93c;font-size:22px;letter-spacing:2px}
 .reviewsBadgeCount{font-size:13px;color:var(--text)}
-.reviewsBadgeSource{font-size:12px;color:var(--muted);font-weight:600}
+.reviewsBadgeSource{font-size:12px;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.reviewsBadgeSource svg{color:var(--accent,#c9a15f)}
 .testimonialCarousel{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;transition:opacity .26s ease,transform .26s ease}
 .testimonialCarousel.hide{opacity:0;transform:translateY(6px)}
 .testimonialCarousel.show{opacity:1;transform:translateY(0)}
