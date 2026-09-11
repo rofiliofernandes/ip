@@ -26,7 +26,7 @@ INSTAGRAM_APP_ID = "2514565005727841"
 INSTAGRAM_REDIRECT_URI = "https://admin.impressionphotographygoa.com/api/instagram/callback"
 INSTAGRAM_GRAPH_VERSION = "v24.0"
 ADMIN_OWNER_EMAIL = "rofitest8@gmail.com"
-RESEND_FROM_EMAIL = "hello@impressionphotographygoa.com"
+RESEND_FROM_EMAIL = "Impression Photography <admin@impressionphotographygoa.com>"
 
 [triggers]
 crons = ["0 0,12 * * *"]
