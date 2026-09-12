@@ -26,7 +26,7 @@
 .festivalBannerOrnament b{font-size:15px}
 .festivalBannerCopy{max-width:520px;margin:0;font-size:15px;line-height:1.7;color:#ffffffe6!important;text-shadow:0 2px 10px #000000cc}
 .festivalBannerSignoff{margin:18px 0 0;font-size:12px;font-weight:700;color:#ffffffee!important;text-shadow:0 2px 10px #000000cc}
-@media(max-width:700px){.festivalBannerArt img{height:auto;width:80vw;max-width:80vw}.festivalBannerMsg{padding:32px 18px}}
+@media(max-width:700px){.festivalBannerArt::before{background-image:var(--festival-bg-mobile);opacity:0}.festivalBannerArt img{position:absolute;inset:0;width:100%;height:100%;max-width:100%;object-fit:cover;border-radius:0;box-shadow:none}.festivalBannerMsg{padding:32px 18px}}
 .festivalPreviewBtn{position:absolute;top:6px;right:6px;z-index:3;background:#000000b3;color:#fff;font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;border:0;cursor:pointer}
 .festivalPreviewBtn:hover{background:#000000e0}
 .festivalPreviewOverlay{position:fixed;inset:0;background:#000000cc;z-index:90;display:grid;place-items:center;padding:20px;overflow:auto}
