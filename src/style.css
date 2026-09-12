@@ -10,7 +10,7 @@
 .festivalBannerMsg{position:relative;z-index:2;min-height:clamp(420px,38vw,600px);width:min(680px,90vw);margin:0 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:50px 24px;color:#fff!important}
 .festivalBannerBrand{margin:0 0 10px;font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--festival-accent,#c9a15f)!important;text-shadow:0 2px 10px #000000cc}
 .festivalBannerKicker{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.24em;color:#ffffffee!important;text-shadow:0 2px 10px #000000cc}
-.festivalBannerMsg h2{margin:0;font:600 clamp(34px,5vw,60px)/1.05 'Playfair Display',serif;letter-spacing:-.02em;color:#ffffff!important;text-shadow:0 3px 18px #000000dd,0 1px 4px #000000ee}
+.festivalBannerMsg h2{margin:0;font:600 clamp(34px,5vw,60px)/1.05 'Playfair Display',serif;letter-spacing:-.02em;color:var(--festival-accent,#c9a15f)!important;text-shadow:0 3px 20px #000000e0,0 1px 6px #000000f0,0 0 2px #000000f0}
 .festivalBannerOrnament{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px 0 16px;color:var(--festival-accent,#c9a15f)}
 .festivalBannerOrnament i{width:min(90px,14vw);height:1px;background:linear-gradient(90deg,transparent,currentColor)}
 .festivalBannerOrnament i:last-child{background:linear-gradient(90deg,currentColor,transparent)}
