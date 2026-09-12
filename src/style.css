@@ -505,6 +505,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .youtubeGallery .referenceSectionHead h2,.testimonials .referenceSectionHead h2{color:var(--public-ink)}
 .youtubeGallery .referenceSectionHead p{color:var(--public-muted)}
 .youtubeGallery .referenceVisit,.testimonials .referenceVisit{color:var(--public-ink)}
+.instagramReels .referenceVisit,[data-theme="light"] .instagramReels .referenceVisit,html:not([data-theme="dark"]) .instagramReels .referenceVisit{color:#e1306c!important}
+.youtubeGallery .referenceVisit,[data-theme="light"] .youtubeGallery .referenceVisit,html:not([data-theme="dark"]) .youtubeGallery .referenceVisit{color:#ff0033!important}
 .referenceGallery .referenceSectionHead p,.instagramReels .referenceSectionHead p{color:#b6c0c5}
 .referenceGallery .galleryNoPhotos{background:#172127;color:#9aa4a9}
 .instagramReels .referenceEmpty{border-color:#2b373e;color:#9aa4a9}
