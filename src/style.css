@@ -5,18 +5,18 @@
 .festivalBanner{position:relative;width:100%;min-height:clamp(420px,38vw,600px);overflow:hidden;background:#14181b;isolation:isolate}
 .festivalBannerArt{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:#14181b}
 .festivalBannerArt::before{content:'';position:absolute;inset:-8%;background-image:var(--festival-bg);background-size:cover;background-position:center;filter:blur(30px) saturate(1.05);transform:scale(1.08);opacity:.85}
-.festivalBannerArt::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#00000055,#00000080)}
+.festivalBannerArt::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at center,#00000099,#00000070 60%,#00000060),linear-gradient(180deg,#00000070,#00000090)}
 .festivalBannerArt img{position:relative;z-index:1;display:block;width:auto;height:88%;max-width:70vw;object-fit:contain;border-radius:8px;box-shadow:0 30px 70px #000a,0 0 0 3px var(--festival-accent,#c9a15f),0 0 0 6px #fff2}
-.festivalBannerMsg{position:relative;z-index:2;min-height:clamp(420px,38vw,600px);width:min(680px,90vw);margin:0 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:50px 24px;color:#fff}
-.festivalBannerBrand{margin:0 0 10px;font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--festival-accent,#c9a15f)}
-.festivalBannerKicker{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.24em;color:#fff9}
-.festivalBannerMsg h2{margin:0;font:600 clamp(34px,5vw,60px)/1.05 'Playfair Display',serif;letter-spacing:-.02em;color:#fff}
+.festivalBannerMsg{position:relative;z-index:2;min-height:clamp(420px,38vw,600px);width:min(680px,90vw);margin:0 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:50px 24px;color:#fff!important}
+.festivalBannerBrand{margin:0 0 10px;font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--festival-accent,#c9a15f)!important;text-shadow:0 2px 10px #000000cc}
+.festivalBannerKicker{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.24em;color:#ffffffee!important;text-shadow:0 2px 10px #000000cc}
+.festivalBannerMsg h2{margin:0;font:600 clamp(34px,5vw,60px)/1.05 'Playfair Display',serif;letter-spacing:-.02em;color:#ffffff!important;text-shadow:0 3px 18px #000000dd,0 1px 4px #000000ee}
 .festivalBannerOrnament{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px 0 16px;color:var(--festival-accent,#c9a15f)}
 .festivalBannerOrnament i{width:min(90px,14vw);height:1px;background:linear-gradient(90deg,transparent,currentColor)}
 .festivalBannerOrnament i:last-child{background:linear-gradient(90deg,currentColor,transparent)}
 .festivalBannerOrnament b{font-size:15px}
-.festivalBannerCopy{max-width:520px;margin:0;font-size:15px;line-height:1.7;color:#fffc}
-.festivalBannerSignoff{margin:18px 0 0;font-size:12px;font-weight:700;color:#fff9}
+.festivalBannerCopy{max-width:520px;margin:0;font-size:15px;line-height:1.7;color:#ffffffe6!important;text-shadow:0 2px 10px #000000cc}
+.festivalBannerSignoff{margin:18px 0 0;font-size:12px;font-weight:700;color:#ffffffee!important;text-shadow:0 2px 10px #000000cc}
 @media(max-width:700px){.festivalBannerArt img{height:auto;width:80vw;max-width:80vw}.festivalBannerMsg{padding:32px 18px}}
 .festivalPreviewBtn{position:absolute;top:6px;right:6px;z-index:3;background:#000000b3;color:#fff;font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;border:0;cursor:pointer}
 .festivalPreviewBtn:hover{background:#000000e0}
