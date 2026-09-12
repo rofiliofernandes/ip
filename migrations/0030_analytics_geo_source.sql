@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS analytics_geo (day TEXT NOT NULL, country TEXT NOT NULL, visits INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(day, country));
+CREATE TABLE IF NOT EXISTS analytics_source (day TEXT NOT NULL, source TEXT NOT NULL, visits INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(day, source));
