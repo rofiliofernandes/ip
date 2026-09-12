@@ -18,7 +18,7 @@
 .festivalBanner[data-festival="eid"] h2{color:#0E6D14!important;text-shadow:0 2px 16px rgba(0,0,0,.85)}
 .festivalBanner[data-festival="independence"] h2{background:linear-gradient(90deg,#ff9933 0%,#ff9933 32%,#ffffff 50%,#138808 68%,#138808 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:0 2px 14px rgba(0,0,0,.5)}
 .festivalBanner[data-festival="newyear"] h2{background:linear-gradient(90deg,#ffd166,#ef476f,#5390d9,#ffd166);background-size:250% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:0 2px 14px rgba(0,0,0,.5);animation:festivalShimmer 5s linear infinite}
-.festivalBanner[data-festival="anniversary"] .festivalBannerBrand{order:10;margin:14px 0 0}
+.festivalBanner[data-festival="anniversary"] .festivalBannerMsg{justify-content:flex-end;padding-bottom:64px}
 @keyframes festivalShimmer{0%{background-position:0% center}100%{background-position:250% center}}
 .festivalBannerOrnament{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px 0 16px;color:var(--festival-accent,#c9a15f)}
 .festivalBannerOrnament i{width:min(90px,14vw);height:1px;background:linear-gradient(90deg,transparent,currentColor)}
