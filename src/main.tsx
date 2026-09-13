@@ -63,7 +63,7 @@ function YoutubeGallery({videos}:{videos:any[]}){
    <h3>{v.title}</h3>
   </article>})}
  </div>
- <div className="youtubeControls"><span>{active+1} / {items.length}</span><span className="youtubeSwipeHint">↔ <b>Swipe to change video</b></span><div className="youtubeNav"><button type="button" onClick={()=>go(active-1)} aria-label="Previous video"><ChevronLeft size={22}/></button><button type="button" onClick={()=>go(active+1)} aria-label="Next video"><ChevronRight size={22}/></button></div></div>
+ <div className="youtubeControls"><span>{active+1} / {items.length}</span><span className="youtubeSwipeHint">↔ <b>Swipe to change video</b> ↔</span><div className="youtubeNav"><button type="button" onClick={()=>go(active-1)} aria-label="Previous video"><ChevronLeft size={22}/></button><button type="button" onClick={()=>go(active+1)} aria-label="Next video"><ChevronRight size={22}/></button></div></div>
  </div></section>}
 
 let igEmbedPromise:Promise<void>|null=null;
@@ -93,7 +93,7 @@ function InstagramReels({videos}:{videos:any[]}){
    <div className="reelCaption">{v.title||'Instagram Reel'}</div>
   </article>})}
  </div>
- <div className="reelControls"><span>{active+1} / {items.length}</span><span className="reelSwipeHint">↔ <b>Swipe to change reel</b></span><div className="reelNav"><button type="button" onClick={()=>go(active-1)} aria-label="Previous reel"><ChevronLeft size={22}/></button><button type="button" onClick={()=>go(active+1)} aria-label="Next reel"><ChevronRight size={22}/></button></div></div>
+ <div className="reelControls"><span>{active+1} / {items.length}</span><span className="reelSwipeHint">↔ <b>Swipe to change reel</b> ↔</span><div className="reelNav"><button type="button" onClick={()=>go(active-1)} aria-label="Previous reel"><ChevronLeft size={22}/></button><button type="button" onClick={()=>go(active+1)} aria-label="Next reel"><ChevronRight size={22}/></button></div></div>
  </div>
  {lightbox&&<div className="reelLightbox" role="dialog" aria-modal="true" onClick={()=>setLightbox(false)}>
   <button type="button" className="reelLightboxClose" onClick={()=>setLightbox(false)} aria-label="Close"><X size={24}/></button>
