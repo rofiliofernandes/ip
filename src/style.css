@@ -763,6 +763,11 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .cropEditorZoom{display:flex;align-items:center;gap:14px;margin:16px 0 6px;font-size:13px;color:var(--muted)}
 .activityLogList{max-height:340px;overflow-y:auto}
 .activityLogToggle{margin-top:12px;width:100%}
+.activityLogFilters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.activityLogFilters button{background:transparent;color:#b8c0c4;border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer}
+.activityLogFilters button.sel{background:var(--accent);color:#14181b;border-color:var(--accent)}
+.activityLogFilters input[type="date"]{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:7px 10px;font-size:13px}
+.activityLogNote{margin-top:10px;font-size:12px}
 .cropEditorZoom span{flex:0 0 auto;min-width:80px}
 .cropEditorZoom input[type="range"]{flex:1}
 .cropEditorPreview.square{aspect-ratio:1}
