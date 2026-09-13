@@ -761,6 +761,9 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .cropEditorDeviceTabs button.sel{background:var(--accent);color:#14181b;border-color:var(--accent)}
 .cropEditorPreview{flex:1;border-radius:10px;overflow:hidden;position:relative;background:#0b1013}
 .cropEditorZoom{display:flex;align-items:center;gap:14px;margin:16px 0 6px;font-size:13px;color:var(--muted)}
+.activityLogHead{cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.activityLogChevron{transition:transform .2s ease;color:var(--muted)}
+.activityLogChevron.open{transform:rotate(180deg)}
 .activityLogList{max-height:340px;overflow-y:auto}
 .activityLogToggle{margin-top:12px;width:100%}
 .activityLogFilters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
