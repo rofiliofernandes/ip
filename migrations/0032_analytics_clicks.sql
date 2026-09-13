@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS analytics_clicks (day TEXT NOT NULL, action TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(day, action));
