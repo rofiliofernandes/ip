@@ -16,7 +16,7 @@ async function decryptToken(env:Env,value:string){const [ivS,ctS]=value.split('.
 async function instagramRedirect(c:any){return c.env.INSTAGRAM_REDIRECT_URI||new URL('/api/instagram/callback',c.req.url).toString()}
 async function getInstagramConnection(c:any){const row:any=await c.env.DB.prepare('SELECT * FROM instagram_integrations WHERE provider=? LIMIT 1').bind('instagram').first();if(row?.access_token_enc){try{return {...row,access_token:await decryptToken(c.env,row.access_token_enc)}}catch{}}if(c.env.INSTAGRAM_ACCESS_TOKEN&&c.env.INSTAGRAM_USER_ID)return {provider:'instagram',user_id:c.env.INSTAGRAM_USER_ID,access_token:c.env.INSTAGRAM_ACCESS_TOKEN,username:null,expires_at:null};return null}
 async function refreshInstagramToken(c:any,conn:any){if(!conn?.access_token)return conn;const version=c.env.INSTAGRAM_GRAPH_VERSION||'v24.0';if(conn.expires_at&&Number(conn.expires_at)-Date.now()>7*86400000)return conn;if(!c.env.INSTAGRAM_APP_SECRET)return conn;const u=new URL(`https://graph.instagram.com/${version}/refresh_access_token`);u.searchParams.set('grant_type','ig_refresh_token');u.searchParams.set('access_token',conn.access_token);const r=await fetch(u);const d:any=await r.json();if(!r.ok||!d.access_token)return conn;const expiresAt=Date.now()+Number(d.expires_in||5184000)*1000;await c.env.DB.prepare('UPDATE instagram_integrations SET access_token_enc=?,expires_at=?,updated_at=CURRENT_TIMESTAMP WHERE provider=?').bind(await encryptToken(c.env,d.access_token),expiresAt,'instagram').run();return {...conn,access_token:d.access_token,expires_at:expiresAt}}
-const PASSWORD_ITERATIONS=310000;
+const PASSWORD_ITERATIONS=100000;
 const STORAGE_LIMIT_BYTES=3221225472;
 const MAX_GALLERY_SLOTS=21;
 const MIN_GALLERY_SLOTS=3;
