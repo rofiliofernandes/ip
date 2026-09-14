@@ -35,3 +35,7 @@ RESEND_FROM_EMAIL = "Impression Photography <admin@impressionphotographygoa.com>
 [triggers]
 crons = ["0 0,12 * * *"]
 
+[observability]
+enabled = true
+head_sampling_rate = 1
+
