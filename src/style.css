@@ -564,9 +564,7 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .galleryPageHead+.galleryFilter+.edgeGallery{background:var(--public-section)}
 
 @media(max-width:700px){
- .youtubeCarousel{width:100%;padding:0 12px;height:auto;touch-action:pan-y}
- .youtubeCard{display:none!important}
- .youtubeCard-active{position:static;width:100%;transform:none!important;opacity:1!important;display:block!important}
+ .youtubeCarousel{width:100%;padding:0 12px;touch-action:pan-y;--yt-card-w:min(88vw,420px);height:calc(var(--yt-card-w) * 9 / 16 + 76px)}
  .youtubeCard h3{height:76px;font-size:15px}
  .youtubeControls{width:calc(100% - 24px);margin-top:12px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;justify-items:center}
  .youtubeControls>span:first-child{grid-column:1/-1;grid-row:1}
@@ -714,9 +712,7 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 .reelPlayBadge{position:relative;z-index:2;width:44px;height:44px;border-radius:50%;background:#fff;color:#171b1e;display:grid;place-items:center;box-shadow:0 8px 22px #0007}
 [data-theme="light"] .instagramReels .reelCard{background:#fffdf8!important;color:#202326!important;border-color:#d6d0c5!important}
 @media(max-width:700px){
-.reelCarousel{width:100%;padding:0 12px;height:auto;touch-action:pan-y}
-.reelCard-other{display:none!important}
-.reelCard-active{position:static;width:min(60vw,260px);margin:0 auto;transform:none!important;opacity:1!important;display:block!important}
+.reelCarousel{width:100%;padding:0 12px;touch-action:pan-y;--reel-card-w:min(70vw,320px);height:calc(var(--reel-card-w) * 16 / 9 + 64px)}
 .reelControls{width:calc(100% - 24px);margin-top:12px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;justify-items:center}
 .reelSwipeHint{display:block;grid-column:1/-1;grid-row:2;padding:10px 16px;border-radius:10px;background:#10171b;border:1px solid #29343a;color:#8a9297;text-align:center}
 .reelNav{grid-column:1/-1;grid-row:3}
