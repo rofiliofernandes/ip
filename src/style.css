@@ -269,6 +269,10 @@ html:not([data-theme="dark"]) .themeSwitch i{background:#202326}
 @media(max-width:700px){
   .siteHeader,.nav{min-height:58px}
   .siteHeader .referenceWrap.nav{padding:4px 14px}
+  .siteHeader .brandLogo{flex-direction:row;align-items:center;gap:9px;min-width:0}
+  .siteHeader .brandText{flex-direction:column;justify-content:center;line-height:1.1}
+  .siteHeader .brandText span{display:none}
+  .siteHeader .brandText b{font-size:16px}
   .desktopNav{display:none}
   .mobileMenuBtn{display:block}
   .referenceHero{height:205px}
