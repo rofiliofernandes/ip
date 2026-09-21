@@ -141,6 +141,7 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
       const contentType=thumbResp.headers.get('content-type')||'image/jpeg';
       const ext=contentType.includes('png')?'png':contentType.includes('webp')?'webp':'jpg';
       const thumbBuf=await thumbResp.arrayBuffer();
+      if(thumbBuf.byteLength<500){console.error('REEL_BACKFILL_ERROR',row.video_id,'suspiciously_small_bytes='+thumbBuf.byteLength);failed++;continue}
       const thumbKey=`photos/instagram-reel-thumbs/${row.video_id}.${ext}`;
       await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
       await c.env.DB.prepare('UPDATE videos SET thumbnail_url=? WHERE id=?').bind('/media/'+thumbKey,row.id).run();
@@ -188,9 +189,11 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
               const ext=contentType.includes('png')?'png':contentType.includes('webp')?'webp':'jpg';
               const thumbBuf=await thumbResp.arrayBuffer();
               console.error('REEL_THUMB_DEBUG',item.id,'bytes='+thumbBuf.byteLength);
-              const thumbKey=`photos/instagram-reel-thumbs/${item.id}.${ext}`;
-              await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
-              storedThumb='/media/'+thumbKey;
+              if(thumbBuf.byteLength>=500){
+                const thumbKey=`photos/instagram-reel-thumbs/${item.id}.${ext}`;
+                await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
+                storedThumb='/media/'+thumbKey;
+              }
             }
           }catch(e:any){console.error('REEL_THUMB_ERROR',item.id,e?.name,e?.message,e?.stack?.slice(0,300))}
         }
