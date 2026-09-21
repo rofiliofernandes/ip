@@ -112,34 +112,43 @@ app.put('/api/upload/:key',async c=>{if(!c.env.MEDIA)return c.json({error:'Photo
 function instagramImportedScore(item:any){const w=Number(item.width||0),h=Number(item.height||0),bytes=Number(item.bytes||0);const pixels=w*h;const resolution=Math.min(100,pixels?Math.sqrt(pixels)/25:55);const size=Math.min(100,bytes?Math.log10(bytes)/7*100:55);const ratio=w&&h?w/h:1.5;const framing=Math.max(0,100-Math.abs(ratio-1.5)*35);return resolution*.45+size*.25+framing*.2+10;}
 async function backfillMissingReelThumbnails(c:any,limit=10){
   if(!c.env.MEDIA)return {fixed:0,failed:0};
-  const rows:any=await c.env.DB.prepare("SELECT id,video_id FROM videos WHERE platform='instagram' AND (thumbnail_url IS NULL OR thumbnail_url='') LIMIT ?").bind(limit).all();
+  const rows:any=await c.env.DB.prepare("SELECT id,video_id,thumbnail_url FROM videos WHERE platform='instagram' AND (thumbnail_url IS NULL OR thumbnail_url='' OR thumbnail_url NOT LIKE '/media/%') LIMIT ?").bind(limit).all();
   const list=(rows.results||[]) as any[];
   if(!list.length)return {fixed:0,failed:0};
-  let conn=await getInstagramConnection(c);
-  if(!conn)return {fixed:0,failed:0};
-  conn=await refreshInstagramToken(c,conn);
+  let conn:any=null;
   const version=c.env.INSTAGRAM_GRAPH_VERSION||'v24.0';
   let fixed=0,failed=0;
   for(const row of list){
     try{
-      const u=new URL(`https://graph.instagram.com/${version}/${encodeURIComponent(row.video_id)}`);
-      u.searchParams.set('fields','thumbnail_url');
-      u.searchParams.set('access_token',conn.access_token);
-      const r=await fetch(u);
-      const d:any=await r.json().catch(()=>({}));
-      console.error('REEL_BACKFILL_DEBUG',row.video_id,'status='+r.status,'has_thumb='+Boolean(d?.thumbnail_url));
-      if(!r.ok||!d?.thumbnail_url){failed++;continue}
-      const thumbResp=await fetch(d.thumbnail_url,{cf:{image:{format:'webp',quality:88}} as any});
-      if(!thumbResp.ok){console.error('REEL_BACKFILL_ERROR',row.video_id,'thumb_fetch_status='+thumbResp.status);failed++;continue}
+      let thumbUrl=String(row.thumbnail_url||'');
+      let thumbResp=thumbUrl?await fetch(thumbUrl,{cf:{image:{format:'webp',quality:88}} as any}):null;
+      console.error('REEL_BACKFILL_DEBUG',row.video_id,'had_existing_url='+Boolean(thumbUrl),'existing_status='+(thumbResp?thumbResp.status:'N/A'));
+      if(!thumbResp||!thumbResp.ok){
+        if(!conn){conn=await getInstagramConnection(c);if(conn)conn=await refreshInstagramToken(c,conn)}
+        if(!conn){console.error('REEL_BACKFILL_ERROR',row.video_id,'no_instagram_connection');failed++;continue}
+        const u=new URL(`https://graph.instagram.com/${version}/${encodeURIComponent(row.video_id)}`);
+        u.searchParams.set('fields','thumbnail_url');
+        u.searchParams.set('access_token',conn.access_token);
+        const r=await fetch(u);
+        const d:any=await r.json().catch(()=>({}));
+        console.error('REEL_BACKFILL_DEBUG',row.video_id,'api_status='+r.status,'api_body='+JSON.stringify(d).slice(0,200));
+        if(!r.ok||!d?.thumbnail_url){failed++;continue}
+        thumbUrl=d.thumbnail_url;
+        thumbResp=await fetch(thumbUrl,{cf:{image:{format:'webp',quality:88}} as any});
+        console.error('REEL_BACKFILL_DEBUG',row.video_id,'fresh_url_status='+thumbResp.status);
+      }
+      if(!thumbResp.ok){console.error('REEL_BACKFILL_ERROR',row.video_id,'final_fetch_status='+thumbResp.status);failed++;continue}
       const thumbBuf=await thumbResp.arrayBuffer();
       const thumbKey=`photos/instagram-reel-thumbs/${row.video_id}.webp`;
       await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});
       await c.env.DB.prepare('UPDATE videos SET thumbnail_url=? WHERE id=?').bind('/media/'+thumbKey,row.id).run();
+      console.error('REEL_BACKFILL_DEBUG',row.video_id,'SAVED bytes='+thumbBuf.byteLength);
       fixed++;
     }catch(e:any){console.error('REEL_BACKFILL_ERROR',row.video_id,e?.name,e?.message);failed++}
   }
   return {fixed,failed};
 }
+
 async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boolean){
   let conn=await getInstagramConnection(c);
   if(!conn)return {ok:false,error:'Instagram is not connected. Open the Connect Instagram link first.',status:400};
@@ -164,7 +173,7 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
         const ignored=await c.env.DB.prepare('SELECT id FROM instagram_reel_ignores WHERE source_url=? OR video_id=? LIMIT 1').bind(item.permalink||'',item.id).first();
         if(ignored){skipped++;continue}
         const exists:any=await c.env.DB.prepare('SELECT id,thumbnail_url FROM videos WHERE source_url=?').bind(item.permalink||'').first();
-        if(exists&&exists.thumbnail_url){skipped++;continue}
+        if(exists&&exists.thumbnail_url&&String(exists.thumbnail_url).startsWith('/media/')){skipped++;continue}
         let storedThumb=item.thumbnail_url||'';
         console.error('REEL_THUMB_DEBUG',item.id,'has_thumbnail_url='+Boolean(item.thumbnail_url),'has_MEDIA='+Boolean(c.env.MEDIA));
         if(item.thumbnail_url&&c.env.MEDIA){
