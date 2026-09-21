@@ -121,8 +121,8 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
   for(const row of list){
     try{
       let thumbUrl=String(row.thumbnail_url||'');
-      let thumbResp=thumbUrl?await fetch(thumbUrl,{cf:{image:{format:'webp',quality:88}} as any}):null;
-      console.error('REEL_BACKFILL_DEBUG',row.video_id,'had_existing_url='+Boolean(thumbUrl),'existing_status='+(thumbResp?thumbResp.status:'N/A'));
+      let thumbResp=thumbUrl?await fetch(thumbUrl):null;
+      console.error('REEL_BACKFILL_DEBUG',row.video_id,'had_existing_url='+Boolean(thumbUrl),'existing_status='+(thumbResp?thumbResp.status:'N/A'),'ctype='+(thumbResp?thumbResp.headers.get('content-type'):'N/A'));
       if(!thumbResp||!thumbResp.ok){
         if(!conn){conn=await getInstagramConnection(c);if(conn)conn=await refreshInstagramToken(c,conn)}
         if(!conn){console.error('REEL_BACKFILL_ERROR',row.video_id,'no_instagram_connection');failed++;continue}
@@ -134,20 +134,23 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
         console.error('REEL_BACKFILL_DEBUG',row.video_id,'api_status='+r.status,'api_body='+JSON.stringify(d).slice(0,200));
         if(!r.ok||!d?.thumbnail_url){failed++;continue}
         thumbUrl=d.thumbnail_url;
-        thumbResp=await fetch(thumbUrl,{cf:{image:{format:'webp',quality:88}} as any});
-        console.error('REEL_BACKFILL_DEBUG',row.video_id,'fresh_url_status='+thumbResp.status);
+        thumbResp=await fetch(thumbUrl);
+        console.error('REEL_BACKFILL_DEBUG',row.video_id,'fresh_url_status='+thumbResp.status,'ctype='+thumbResp.headers.get('content-type'));
       }
       if(!thumbResp.ok){console.error('REEL_BACKFILL_ERROR',row.video_id,'final_fetch_status='+thumbResp.status);failed++;continue}
+      const contentType=thumbResp.headers.get('content-type')||'image/jpeg';
+      const ext=contentType.includes('png')?'png':contentType.includes('webp')?'webp':'jpg';
       const thumbBuf=await thumbResp.arrayBuffer();
-      const thumbKey=`photos/instagram-reel-thumbs/${row.video_id}.webp`;
-      await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});
+      const thumbKey=`photos/instagram-reel-thumbs/${row.video_id}.${ext}`;
+      await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
       await c.env.DB.prepare('UPDATE videos SET thumbnail_url=? WHERE id=?').bind('/media/'+thumbKey,row.id).run();
-      console.error('REEL_BACKFILL_DEBUG',row.video_id,'SAVED bytes='+thumbBuf.byteLength);
+      console.error('REEL_BACKFILL_DEBUG',row.video_id,'SAVED bytes='+thumbBuf.byteLength,'key='+thumbKey);
       fixed++;
-    }catch(e:any){console.error('REEL_BACKFILL_ERROR',row.video_id,e?.name,e?.message);failed++}
+    }catch(e:any){console.error('REEL_BACKFILL_ERROR',row.video_id,e?.name,e?.message,e?.stack?.slice(0,300));failed++}
   }
   return {fixed,failed};
 }
+
 
 async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boolean){
   let conn=await getInstagramConnection(c);
@@ -178,16 +181,18 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
         console.error('REEL_THUMB_DEBUG',item.id,'has_thumbnail_url='+Boolean(item.thumbnail_url),'has_MEDIA='+Boolean(c.env.MEDIA));
         if(item.thumbnail_url&&c.env.MEDIA){
           try{
-            const thumbResp=await fetch(item.thumbnail_url,{cf:{image:{format:'webp',quality:88}} as any});
-            console.error('REEL_THUMB_DEBUG',item.id,'fetch_status='+thumbResp.status,'ok='+thumbResp.ok);
+            const thumbResp=await fetch(item.thumbnail_url);
+            console.error('REEL_THUMB_DEBUG',item.id,'fetch_status='+thumbResp.status,'ok='+thumbResp.ok,'ctype='+thumbResp.headers.get('content-type'));
             if(thumbResp.ok){
+              const contentType=thumbResp.headers.get('content-type')||'image/jpeg';
+              const ext=contentType.includes('png')?'png':contentType.includes('webp')?'webp':'jpg';
               const thumbBuf=await thumbResp.arrayBuffer();
               console.error('REEL_THUMB_DEBUG',item.id,'bytes='+thumbBuf.byteLength);
-              const thumbKey=`photos/instagram-reel-thumbs/${item.id}.webp`;
-              await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});
+              const thumbKey=`photos/instagram-reel-thumbs/${item.id}.${ext}`;
+              await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
               storedThumb='/media/'+thumbKey;
             }
-          }catch(e:any){console.error('REEL_THUMB_ERROR',item.id,e?.name,e?.message)}
+          }catch(e:any){console.error('REEL_THUMB_ERROR',item.id,e?.name,e?.message,e?.stack?.slice(0,300))}
         }
         console.error('REEL_THUMB_DEBUG',item.id,'final_storedThumb='+(storedThumb?storedThumb.slice(0,60):'EMPTY'));
         if(exists){
