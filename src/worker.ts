@@ -133,8 +133,8 @@ async function syncInstagramData(c:any,startCursor?:string){
       if(isReel){
         const ignored=await c.env.DB.prepare('SELECT id FROM instagram_reel_ignores WHERE source_url=? OR video_id=? LIMIT 1').bind(item.permalink||'',item.id).first();
         if(ignored){skipped++;continue}
-        const exists=await c.env.DB.prepare('SELECT id FROM videos WHERE source_url=?').bind(item.permalink||'').first();
-        if(exists){skipped++;continue}
+        const exists:any=await c.env.DB.prepare('SELECT id,thumbnail_url FROM videos WHERE source_url=?').bind(item.permalink||'').first();
+        if(exists&&exists.thumbnail_url){skipped++;continue}
         let storedThumb=item.thumbnail_url||'';
         if(item.thumbnail_url&&c.env.MEDIA){
           try{
@@ -146,6 +146,11 @@ async function syncInstagramData(c:any,startCursor?:string){
               storedThumb='/media/'+thumbKey;
             }
           }catch{}
+        }
+        if(exists){
+          if(storedThumb){await c.env.DB.prepare('UPDATE videos SET thumbnail_url=? WHERE id=?').bind(storedThumb,exists.id).run();reelsImported++}
+          else skipped++;
+          continue;
         }
         await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order,thumbnail_url,media_url) VALUES(?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,reelsImported,storedThumb,item.media_url||'').run();
         reelsImported++;continue;
