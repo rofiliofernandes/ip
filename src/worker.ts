@@ -229,7 +229,7 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
     }
     endpoint=caughtUp?'':(data.paging?.next||'');pages++;
   }
-  const backfill=await backfillMissingReelThumbnails(c,10);return {ok:true,photosImported,reelsImported,skipped,pages,photoStorageEnabled:Boolean(c.env.MEDIA),username:conn.username||null,nextCursor:endpoint||null,thumbsFixed:backfill.fixed,thumbsFailed:backfill.failed};
+  const backfill=await backfillMissingReelThumbnails(c,50);return {ok:true,photosImported,reelsImported,skipped,pages,photoStorageEnabled:Boolean(c.env.MEDIA),username:conn.username||null,nextCursor:endpoint||null,thumbsFixed:backfill.fixed,thumbsFailed:backfill.failed};
 }
 
 function parseJsonSetting(row:any, fallback:any){try{return row?.value?JSON.parse(row.value):fallback}catch{return fallback}}
