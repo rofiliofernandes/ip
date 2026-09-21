@@ -121,7 +121,7 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
   for(const row of list){
     try{
       let thumbUrl=String(row.thumbnail_url||'');
-      let thumbResp=thumbUrl?await fetch(thumbUrl):null;
+      let thumbResp=thumbUrl?await fetch(thumbUrl,{headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36','Referer':'https://www.instagram.com/','Accept':'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'}}):null;
       console.error('REEL_BACKFILL_DEBUG',row.video_id,'had_existing_url='+Boolean(thumbUrl),'existing_status='+(thumbResp?thumbResp.status:'N/A'),'ctype='+(thumbResp?thumbResp.headers.get('content-type'):'N/A'));
       if(!thumbResp||!thumbResp.ok){
         if(!conn){conn=await getInstagramConnection(c);if(conn)conn=await refreshInstagramToken(c,conn)}
@@ -134,7 +134,7 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
         console.error('REEL_BACKFILL_DEBUG',row.video_id,'api_status='+r.status,'api_body='+JSON.stringify(d).slice(0,200));
         if(!r.ok||!d?.thumbnail_url){failed++;continue}
         thumbUrl=d.thumbnail_url;
-        thumbResp=await fetch(thumbUrl);
+        thumbResp=await fetch(thumbUrl,{headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36','Referer':'https://www.instagram.com/','Accept':'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'}});
         console.error('REEL_BACKFILL_DEBUG',row.video_id,'fresh_url_status='+thumbResp.status,'ctype='+thumbResp.headers.get('content-type'));
       }
       if(!thumbResp.ok){console.error('REEL_BACKFILL_ERROR',row.video_id,'final_fetch_status='+thumbResp.status);failed++;continue}
@@ -182,7 +182,7 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
         console.error('REEL_THUMB_DEBUG',item.id,'has_thumbnail_url='+Boolean(item.thumbnail_url),'has_MEDIA='+Boolean(c.env.MEDIA));
         if(item.thumbnail_url&&c.env.MEDIA){
           try{
-            const thumbResp=await fetch(item.thumbnail_url);
+            const thumbResp=await fetch(item.thumbnail_url,{headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36','Referer':'https://www.instagram.com/','Accept':'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'}});
             console.error('REEL_THUMB_DEBUG',item.id,'fetch_status='+thumbResp.status,'ok='+thumbResp.ok,'ctype='+thumbResp.headers.get('content-type'));
             if(thumbResp.ok){
               const contentType=thumbResp.headers.get('content-type')||'image/jpeg';
