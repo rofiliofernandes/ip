@@ -133,6 +133,7 @@ async function demoteBlankReelThumbnails(c:any,limit=30){
   }
   return {checked,demoted};
 }
+async function demoteNow(c:any,rowId:string){try{const pos=await positionAfterTop10(c);await c.env.DB.prepare("UPDATE videos SET sort_order=? WHERE id=? AND sort_order<500").bind(pos,rowId).run()}catch{}}
 async function backfillMissingReelThumbnails(c:any,limit=10){
   if(!c.env.MEDIA)return {fixed:0,failed:0};
   const rows:any=await c.env.DB.prepare("SELECT id,video_id,thumbnail_url FROM videos WHERE platform='instagram' AND (thumbnail_url IS NULL OR thumbnail_url='' OR thumbnail_url NOT LIKE '/media/%') LIMIT ?").bind(limit).all();
@@ -148,23 +149,23 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
       console.error('REEL_BACKFILL_DEBUG',row.video_id,'had_existing_url='+Boolean(thumbUrl),'existing_status='+(thumbResp?thumbResp.status:'N/A'),'ctype='+(thumbResp?thumbResp.headers.get('content-type'):'N/A'));
       if(!thumbResp||!thumbResp.ok){
         if(!conn){conn=await getInstagramConnection(c);if(conn)conn=await refreshInstagramToken(c,conn)}
-        if(!conn){console.error('REEL_BACKFILL_ERROR',row.video_id,'no_instagram_connection');failed++;continue}
+        if(!conn){console.error('REEL_BACKFILL_ERROR',row.video_id,'no_instagram_connection');await demoteNow(c,row.id);failed++;continue}
         const u=new URL(`https://graph.instagram.com/${version}/${encodeURIComponent(row.video_id)}`);
         u.searchParams.set('fields','thumbnail_url');
         u.searchParams.set('access_token',conn.access_token);
         const r=await fetch(u);
         const d:any=await r.json().catch(()=>({}));
         console.error('REEL_BACKFILL_DEBUG',row.video_id,'api_status='+r.status,'api_body='+JSON.stringify(d).slice(0,200));
-        if(!r.ok||!d?.thumbnail_url){failed++;continue}
+        if(!r.ok||!d?.thumbnail_url){await demoteNow(c,row.id);failed++;continue}
         thumbUrl=d.thumbnail_url;
         thumbResp=await fetch(thumbUrl,{headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36','Referer':'https://www.instagram.com/','Accept':'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'}});
         console.error('REEL_BACKFILL_DEBUG',row.video_id,'fresh_url_status='+thumbResp.status,'ctype='+thumbResp.headers.get('content-type'));
       }
-      if(!thumbResp.ok){console.error('REEL_BACKFILL_ERROR',row.video_id,'final_fetch_status='+thumbResp.status);failed++;continue}
+      if(!thumbResp.ok){console.error('REEL_BACKFILL_ERROR',row.video_id,'final_fetch_status='+thumbResp.status);await demoteNow(c,row.id);failed++;continue}
       const contentType=thumbResp.headers.get('content-type')||'image/jpeg';
       const ext=contentType.includes('png')?'png':contentType.includes('webp')?'webp':'jpg';
       const thumbBuf=await thumbResp.arrayBuffer();
-      if(thumbBuf.byteLength<500){console.error('REEL_BACKFILL_ERROR',row.video_id,'suspiciously_small_bytes='+thumbBuf.byteLength);failed++;continue}
+      if(thumbBuf.byteLength<500){console.error('REEL_BACKFILL_ERROR',row.video_id,'suspiciously_small_bytes='+thumbBuf.byteLength);await demoteNow(c,row.id);failed++;continue}
       const thumbKey=`photos/instagram-reel-thumbs/${row.video_id}.${ext}`;
       await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
       const likelyBlank=thumbBuf.byteLength<6000;
@@ -174,7 +175,7 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
       console.error('REEL_BACKFILL_DEBUG',row.video_id,'likely_blank='+likelyBlank);
       console.error('REEL_BACKFILL_DEBUG',row.video_id,'SAVED bytes='+thumbBuf.byteLength,'key='+thumbKey);
       fixed++;
-    }catch(e:any){console.error('REEL_BACKFILL_ERROR',row.video_id,e?.name,e?.message,e?.stack?.slice(0,300));failed++}
+    }catch(e:any){console.error('REEL_BACKFILL_ERROR',row.video_id,e?.name,e?.message,e?.stack?.slice(0,300));await demoteNow(c,row.id);failed++}
   }
   return {fixed,failed};
 }
@@ -233,12 +234,14 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
           }catch(e:any){console.error('REEL_THUMB_ERROR',item.id,e?.name,e?.message,e?.stack?.slice(0,300))}
         }
         console.error('REEL_THUMB_DEBUG',item.id,'final_storedThumb='+(storedThumb?storedThumb.slice(0,60):'EMPTY'),'likely_blank='+likelyBlankNew);
+        const isMediaPath=storedThumb.startsWith('/media/');
+        const shouldDemote=likelyBlankNew||!isMediaPath;
         if(exists){
-          if(storedThumb){if(likelyBlankNew){const pos=await positionAfterTop10(c);await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,sort_order=?,bytes=? WHERE id=?').bind(storedThumb,pos,newThumbBytes,exists.id).run()}else await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,bytes=? WHERE id=?').bind(storedThumb,newThumbBytes,exists.id).run();reelsImported++}
-          else skipped++;
+          if(storedThumb&&isMediaPath){if(shouldDemote){const pos=await positionAfterTop10(c);await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,sort_order=?,bytes=? WHERE id=?').bind(storedThumb,pos,newThumbBytes,exists.id).run()}else await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,bytes=? WHERE id=?').bind(storedThumb,newThumbBytes,exists.id).run();reelsImported++}
+          else{await demoteNow(c,exists.id);skipped++}
           continue;
         }
-        const insertSortOrder=likelyBlankNew?(await positionAfterTop10(c)):reelsImported;
+        const insertSortOrder=shouldDemote?(await positionAfterTop10(c)):reelsImported;
         await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order,thumbnail_url,media_url,bytes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,insertSortOrder,storedThumb,item.media_url||'',newThumbBytes).run();
         reelsImported++;continue;
       }
