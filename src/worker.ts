@@ -110,6 +110,26 @@ app.post('/api/admin/photos',requireAuth,async c=>{let b:any;try{b=await c.req.j
 app.post('/api/admin/upload-url',requireAuth,async c=>{if(!c.env.MEDIA)return c.json({error:'Photo storage is not enabled yet. Please connect R2 storage before uploading.'},503);let b:any;try{b=await c.req.json()}catch{return c.json({error:'Invalid request'},400)}const size=Number(b.size||0);const contentType=String(b.contentType||'').toLowerCase();if(!Number.isInteger(size)||size<=0||size>30*1024*1024)return c.json({error:'File must be 1 byte–30 MB'},400);if(contentType!=='image/webp')return c.json({error:'Uploads must be converted to WebP first'},415);const reservationId=uid();if(!(await reserveStorage(c,reservationId,size)))return c.json({error:'5 GB storage limit reached'},413);const safe=String(b.name||'photo.webp').replace(/[^a-zA-Z0-9._-]/g,'_').replace(/\.[^.]+$/,'')+'.webp';const key=`photos/${new Date().toISOString().slice(0,10)}/${uid()}-${safe}`;const exp=Date.now()+600000;const nonce=uid();await c.env.DB.prepare('UPDATE storage_reservations SET key=? WHERE id=?').bind(key,reservationId).run();try{await c.env.DB.prepare('INSERT INTO upload_nonces(id,reservation_id,key,expected_size,content_type,expires_at,used_at) VALUES(?,?,?,?,?,?,NULL)').bind(nonce,reservationId,key,size,contentType,exp).run();}catch(e){await releaseStorage(c,reservationId);return c.json({error:'Could not prepare upload'},500)}const url=new URL(c.req.url);url.pathname=`/api/upload/${encodeURIComponent(key)}`;url.search=`?expires=${exp}&nonce=${encodeURIComponent(nonce)}`;const token=await hmac(c.env,`PUT:${key}:${size}:${contentType}:${exp}:${nonce}`);url.search+=`&token=${encodeURIComponent(token)}`;return c.json({key,url:url.toString(),expires:exp,reservationId});});
 app.put('/api/upload/:key',async c=>{if(!c.env.MEDIA)return c.json({error:'Photo storage is not enabled yet.'},503);const key=decodeURIComponent(c.req.param('key'));const u=new URL(c.req.url);const token=u.searchParams.get('token')||'';const exp=Number(u.searchParams.get('expires')||0);const nonce=u.searchParams.get('nonce')||'';const row:any=await c.env.DB.prepare('SELECT * FROM upload_nonces WHERE id=? AND key=?').bind(nonce,key).first();if(!row||row.used_at||Number(row.expires_at)<Date.now())return c.json({error:'Upload URL expired or already used'},403);const contentType=(c.req.header('Content-Type')||'').toLowerCase();const expected=Number(row.expected_size||0);if(!key.toLowerCase().endsWith('.webp')||contentType!=='image/webp'||exp!==Number(row.expires_at)||token!==await hmac(c.env,`PUT:${key}:${expected}:${contentType}:${exp}:${nonce}`))return c.json({error:'Invalid upload authorization'},403);if(!c.req.raw.body)return c.json({error:'No body'},400);const buf=await c.req.raw.arrayBuffer();if(buf.byteLength!==expected||buf.byteLength>30*1024*1024)return c.json({error:'Uploaded file size does not match the signed request'},413);const claimed=await c.env.DB.prepare('UPDATE upload_nonces SET used_at=? WHERE id=? AND used_at IS NULL').bind(Date.now(),nonce).run();if(Number(claimed.meta?.changes||0)!==1)return c.json({error:'Upload URL already used'},409);try{await c.env.MEDIA.put(key,buf,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});await c.env.DB.prepare('UPDATE upload_nonces SET uploaded_at=? WHERE id=?').bind(Date.now(),nonce).run();return c.json({ok:true,key,reservationId:row.reservation_id});}catch(e){await c.env.MEDIA.delete(key).catch(()=>{});await releaseStorage(c,row.reservation_id||'');return c.json({error:'Storage upload failed'},502)}});
 function instagramImportedScore(item:any){const w=Number(item.width||0),h=Number(item.height||0),bytes=Number(item.bytes||0);const pixels=w*h;const resolution=Math.min(100,pixels?Math.sqrt(pixels)/25:55);const size=Math.min(100,bytes?Math.log10(bytes)/7*100:55);const ratio=w&&h?w/h:1.5;const framing=Math.max(0,100-Math.abs(ratio-1.5)*35);return resolution*.45+size*.25+framing*.2+10;}
+async function demoteBlankReelThumbnails(c:any,limit=30){
+  if(!c.env.MEDIA)return {checked:0,demoted:0};
+  const rows:any=await c.env.DB.prepare("SELECT id,video_id,thumbnail_url,sort_order FROM videos WHERE platform='instagram' AND thumbnail_url LIKE '/media/%' AND sort_order<500 LIMIT ?").bind(limit).all();
+  const list=(rows.results||[]) as any[];
+  let checked=0,demoted=0;
+  for(const row of list){
+    checked++;
+    try{
+      const key=String(row.thumbnail_url).replace(/^\/media\//,'');
+      const head=await c.env.MEDIA.head(key);
+      if(head&&head.size<6000){
+        const maxRow:any=await c.env.DB.prepare("SELECT MAX(sort_order) m FROM videos WHERE platform='instagram'").first();
+        await c.env.DB.prepare('UPDATE videos SET sort_order=? WHERE id=?').bind(Number(maxRow?.m||0)+1000,row.id).run();
+        console.error('REEL_DEMOTE_DEBUG',row.video_id,'size='+head.size,'DEMOTED');
+        demoted++;
+      }
+    }catch(e:any){console.error('REEL_DEMOTE_ERROR',row.video_id,e?.name,e?.message)}
+  }
+  return {checked,demoted};
+}
 async function backfillMissingReelThumbnails(c:any,limit=10){
   if(!c.env.MEDIA)return {fixed:0,failed:0};
   const rows:any=await c.env.DB.prepare("SELECT id,video_id,thumbnail_url FROM videos WHERE platform='instagram' AND (thumbnail_url IS NULL OR thumbnail_url='' OR thumbnail_url NOT LIKE '/media/%') LIMIT ?").bind(limit).all();
@@ -237,7 +257,7 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
     }
     endpoint=caughtUp?'':(data.paging?.next||'');pages++;
   }
-  const backfill=await backfillMissingReelThumbnails(c,50);return {ok:true,photosImported,reelsImported,skipped,pages,photoStorageEnabled:Boolean(c.env.MEDIA),username:conn.username||null,nextCursor:endpoint||null,thumbsFixed:backfill.fixed,thumbsFailed:backfill.failed};
+  const backfill=await backfillMissingReelThumbnails(c,50);const demoted=await demoteBlankReelThumbnails(c,30);return {ok:true,photosImported,reelsImported,skipped,pages,photoStorageEnabled:Boolean(c.env.MEDIA),username:conn.username||null,nextCursor:endpoint||null,thumbsFixed:backfill.fixed,thumbsFailed:backfill.failed,thumbsDemoted:demoted.demoted};
 }
 
 function parseJsonSetting(row:any, fallback:any){try{return row?.value?JSON.parse(row.value):fallback}catch{return fallback}}
