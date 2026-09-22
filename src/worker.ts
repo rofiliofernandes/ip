@@ -38,7 +38,7 @@ function validMediaUrl(v:string){if(!v)return true;if(v.startsWith('/media/'))re
 async function clearRateLimit(c:any,...keys:string[]){if(keys.length)await c.env.DB.batch(keys.map(k=>c.env.DB.prepare('DELETE FROM auth_rate_limits WHERE key=?').bind(k)))}
 async function rateLimit(c:any,key:string,max:number,windowMs:number,blockMs=windowMs){const now=Date.now();const row:any=await c.env.DB.prepare('SELECT window_start,count,blocked_until FROM auth_rate_limits WHERE key=?').bind(key).first();if(row?.blocked_until&&Number(row.blocked_until)>now)return false;const start=Number(row?.window_start||0);if(!row||now-start>=windowMs){await c.env.DB.prepare('INSERT INTO auth_rate_limits(key,window_start,count,blocked_until) VALUES(?,?,1,0) ON CONFLICT(key) DO UPDATE SET window_start=excluded.window_start,count=1,blocked_until=0').bind(key,now).run();return true}const count=Number(row.count||0)+1;const blocked=count>max;await c.env.DB.prepare('UPDATE auth_rate_limits SET count=?,blocked_until=? WHERE key=?').bind(count,blocked?now+blockMs:0,key).run();return !blocked}
 function setupOwnerEmails(env:Env){return String(env.ADMIN_OWNER_EMAIL||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)}
-async function storageUsed(c:any){const used:any=await c.env.DB.prepare('SELECT COALESCE(SUM(bytes),0) bytes FROM photos WHERE r2_key IS NOT NULL').first();return Number(used?.bytes||0)}
+async function storageUsed(c:any){const used:any=await c.env.DB.prepare("SELECT (SELECT COALESCE(SUM(bytes),0) FROM photos WHERE r2_key IS NOT NULL)+(SELECT COALESCE(SUM(bytes),0) FROM videos WHERE thumbnail_url LIKE '/media/%') bytes").first();return Number(used?.bytes||0)}
 async function reserveStorage(c:any,id:string,bytes:number){if(!c.env.MEDIA)return true;const used=await storageUsed(c);const r=await c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=reserved_bytes+? WHERE id=1 AND reserved_bytes+?+?<=?').bind(bytes,bytes,used,STORAGE_LIMIT_BYTES).run();if(Number(r.meta?.changes||0)!==1)return false;try{await c.env.DB.prepare('INSERT INTO storage_reservations(id,bytes,expires_at) VALUES(?,?,?)').bind(id,bytes,Date.now()+20*60*1000).run();return true}catch(e){await c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=MAX(0,reserved_bytes-?) WHERE id=1').bind(bytes).run();throw e}}
 async function releaseStorage(c:any,id:string){const row:any=await c.env.DB.prepare('SELECT bytes FROM storage_reservations WHERE id=?').bind(id).first();if(!row)return;await c.env.DB.batch([c.env.DB.prepare('DELETE FROM storage_reservations WHERE id=?').bind(id),c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=MAX(0,reserved_bytes-?) WHERE id=1').bind(Number(row.bytes||0))])}
 async function finalizeStorage(c:any,id:string){return releaseStorage(c,id)}
@@ -112,7 +112,8 @@ app.put('/api/upload/:key',async c=>{if(!c.env.MEDIA)return c.json({error:'Photo
 function instagramImportedScore(item:any){const w=Number(item.width||0),h=Number(item.height||0),bytes=Number(item.bytes||0);const pixels=w*h;const resolution=Math.min(100,pixels?Math.sqrt(pixels)/25:55);const size=Math.min(100,bytes?Math.log10(bytes)/7*100:55);const ratio=w&&h?w/h:1.5;const framing=Math.max(0,100-Math.abs(ratio-1.5)*35);return resolution*.45+size*.25+framing*.2+10;}
 async function demoteBlankReelThumbnails(c:any,limit=30){
   if(!c.env.MEDIA)return {checked:0,demoted:0};
-  const rows:any=await c.env.DB.prepare("SELECT id,video_id,thumbnail_url,sort_order FROM videos WHERE platform='instagram' AND thumbnail_url LIKE '/media/%' AND sort_order<500 LIMIT ?").bind(limit).all();
+  await ensureVideoBytesColumn(c);
+  const rows:any=await c.env.DB.prepare("SELECT id,video_id,thumbnail_url,sort_order,bytes FROM videos WHERE platform='instagram' AND thumbnail_url LIKE '/media/%' AND (sort_order<500 OR bytes IS NULL OR bytes=0) LIMIT ?").bind(limit).all();
   const list=(rows.results||[]) as any[];
   let checked=0,demoted=0;
   for(const row of list){
@@ -120,9 +121,11 @@ async function demoteBlankReelThumbnails(c:any,limit=30){
     try{
       const key=String(row.thumbnail_url).replace(/^\/media\//,'');
       const head=await c.env.MEDIA.head(key);
-      if(head&&head.size<6000){
-        const maxRow:any=await c.env.DB.prepare("SELECT MAX(sort_order) m FROM videos WHERE platform='instagram'").first();
-        await c.env.DB.prepare('UPDATE videos SET sort_order=? WHERE id=?').bind(Number(maxRow?.m||0)+1000,row.id).run();
+      if(!head)continue;
+      if(!row.bytes)await c.env.DB.prepare('UPDATE videos SET bytes=? WHERE id=?').bind(head.size,row.id).run();
+      if(head.size<6000&&Number(row.sort_order||0)<500){
+        const pos=await positionAfterTop10(c);
+        await c.env.DB.prepare('UPDATE videos SET sort_order=? WHERE id=?').bind(pos,row.id).run();
         console.error('REEL_DEMOTE_DEBUG',row.video_id,'size='+head.size,'DEMOTED');
         demoted++;
       }
@@ -166,7 +169,7 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
       await c.env.MEDIA.put(thumbKey,thumbBuf,{httpMetadata:{contentType,cacheControl:'public,max-age=31536000,immutable'}});
       const likelyBlank=thumbBuf.byteLength<6000;
       const writes:any[]=[c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=reserved_bytes+? WHERE id=1').bind(thumbBuf.byteLength)];
-      if(likelyBlank){const maxRow:any=await c.env.DB.prepare("SELECT MAX(sort_order) m FROM videos WHERE platform='instagram'").first();writes.push(c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,sort_order=? WHERE id=?').bind('/media/'+thumbKey,Number(maxRow?.m||0)+1000,row.id))}else{writes.push(c.env.DB.prepare('UPDATE videos SET thumbnail_url=? WHERE id=?').bind('/media/'+thumbKey,row.id))}
+      if(likelyBlank){const pos=await positionAfterTop10(c);writes.push(c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,sort_order=?,bytes=? WHERE id=?').bind('/media/'+thumbKey,pos,thumbBuf.byteLength,row.id))}else{writes.push(c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,bytes=? WHERE id=?').bind('/media/'+thumbKey,thumbBuf.byteLength,row.id))}
       await c.env.DB.batch(writes);
       console.error('REEL_BACKFILL_DEBUG',row.video_id,'likely_blank='+likelyBlank);
       console.error('REEL_BACKFILL_DEBUG',row.video_id,'SAVED bytes='+thumbBuf.byteLength,'key='+thumbKey);
@@ -177,7 +180,10 @@ async function backfillMissingReelThumbnails(c:any,limit=10){
 }
 
 
+async function positionAfterTop10(c:any){const row:any=await c.env.DB.prepare("SELECT sort_order FROM videos WHERE platform='instagram' ORDER BY sort_order,id LIMIT 1 OFFSET 10").first();return row?Number(row.sort_order):11}
+async function ensureVideoBytesColumn(c:any){try{await c.env.DB.prepare('ALTER TABLE videos ADD COLUMN bytes INTEGER DEFAULT 0').run()}catch{}}
 async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boolean){
+  await ensureVideoBytesColumn(c);
   let conn=await getInstagramConnection(c);
   if(!conn)return {ok:false,error:'Instagram is not connected. Open the Connect Instagram link first.',status:400};
   conn=await refreshInstagramToken(c,conn);
@@ -204,6 +210,7 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
         if(exists&&exists.thumbnail_url&&String(exists.thumbnail_url).startsWith('/media/')){skipped++;continue}
         let storedThumb=item.thumbnail_url||'';
         let likelyBlankNew=false;
+        let newThumbBytes=0;
         console.error('REEL_THUMB_DEBUG',item.id,'has_thumbnail_url='+Boolean(item.thumbnail_url),'has_MEDIA='+Boolean(c.env.MEDIA));
         if(item.thumbnail_url&&c.env.MEDIA){
           try{
@@ -220,18 +227,19 @@ async function syncInstagramData(c:any,startCursor?:string,disableEarlyExit?:boo
                 await c.env.DB.prepare('UPDATE storage_quota SET reserved_bytes=reserved_bytes+? WHERE id=1').bind(thumbBuf.byteLength).run();
                 storedThumb='/media/'+thumbKey;
                 likelyBlankNew=thumbBuf.byteLength<6000;
+                newThumbBytes=thumbBuf.byteLength;
               }
             }
           }catch(e:any){console.error('REEL_THUMB_ERROR',item.id,e?.name,e?.message,e?.stack?.slice(0,300))}
         }
         console.error('REEL_THUMB_DEBUG',item.id,'final_storedThumb='+(storedThumb?storedThumb.slice(0,60):'EMPTY'),'likely_blank='+likelyBlankNew);
         if(exists){
-          if(storedThumb){const extra=likelyBlankNew?{sort_order:(await c.env.DB.prepare("SELECT MAX(sort_order) m FROM videos WHERE platform='instagram'").first() as any)?.m}:null;if(likelyBlankNew)await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,sort_order=? WHERE id=?').bind(storedThumb,Number(extra?.sort_order||0)+1000,exists.id).run();else await c.env.DB.prepare('UPDATE videos SET thumbnail_url=? WHERE id=?').bind(storedThumb,exists.id).run();reelsImported++}
+          if(storedThumb){if(likelyBlankNew){const pos=await positionAfterTop10(c);await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,sort_order=?,bytes=? WHERE id=?').bind(storedThumb,pos,newThumbBytes,exists.id).run()}else await c.env.DB.prepare('UPDATE videos SET thumbnail_url=?,bytes=? WHERE id=?').bind(storedThumb,newThumbBytes,exists.id).run();reelsImported++}
           else skipped++;
           continue;
         }
-        const insertSortOrder=likelyBlankNew?(Number((await c.env.DB.prepare("SELECT MAX(sort_order) m FROM videos WHERE platform='instagram'").first() as any)?.m||0)+1000):reelsImported;
-        await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order,thumbnail_url,media_url) VALUES(?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,insertSortOrder,storedThumb,item.media_url||'').run();
+        const insertSortOrder=likelyBlankNew?(await positionAfterTop10(c)):reelsImported;
+        await c.env.DB.prepare(`INSERT INTO videos(id,title,embed_url,platform,source_url,video_id,category,active,sort_order,thumbnail_url,media_url,bytes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`).bind(uid(),item.caption?.split('\n')[0]?.slice(0,100)||'Instagram Reel',item.permalink||'','instagram',item.permalink||'',item.id,category,1,insertSortOrder,storedThumb,item.media_url||'',newThumbBytes).run();
         reelsImported++;continue;
       }
       const groupId=item.media_type==='CAROUSEL_ALBUM'?item.id:null;
