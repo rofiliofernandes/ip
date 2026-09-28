@@ -904,3 +904,11 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 @media(max-width:600px){.testimonialCard{flex-basis:88vw;padding:22px}}
 @media(max-width:420px){.login{padding:16px}.login .panel{width:min(460px,calc(100vw - 32px))}}
 .testimonialShot{width:100%;border-radius:10px;display:block;margin-top:4px}
+
+/* Loading placeholders: soft neutral instead of near-black, so the page never flashes black while photos load */
+.edgeGalleryItem{background:#e6dfd0}
+.referenceHero{background:linear-gradient(135deg,#7a7064,#9a9080)}
+.introImage{background:#e6dfd0}
+[data-theme="dark"] .edgeGalleryItem{background:#111}
+[data-theme="dark"] .referenceHero{background:#111}
+[data-theme="dark"] .introImage{background:#111}
