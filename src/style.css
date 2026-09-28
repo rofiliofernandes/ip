@@ -912,3 +912,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 [data-theme="dark"] .edgeGalleryItem{background:#111}
 [data-theme="dark"] .referenceHero{background:#111}
 [data-theme="dark"] .introImage{background:#111}
+
+/* Mobile menu: readable text and divider in light theme (was pale gray on cream) */
+[data-theme="light"] .mobileMenu{border-top-color:#20232622}
+[data-theme="light"] .mobileMenu a{color:#202326;font-weight:500}
+[data-theme="light"] .mobileMenu a:hover,[data-theme="light"] .mobileMenu a:active{color:#8a6a2f}
