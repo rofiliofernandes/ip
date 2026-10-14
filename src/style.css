@@ -917,3 +917,8 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 [data-theme="light"] .mobileMenu{border-top-color:#20232622}
 [data-theme="light"] .mobileMenu a{color:#202326;font-weight:500}
 [data-theme="light"] .mobileMenu a:hover,[data-theme="light"] .mobileMenu a:active{color:#8a6a2f}
+
+/* Mobile gallery: slight side margins and gaps between photos (instead of full edge-to-edge) */
+@media(max-width:700px){
+.edgeGallery{box-sizing:border-box;width:100%;padding:0 16px 16px;gap:16px}
+}
