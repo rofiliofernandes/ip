@@ -922,3 +922,13 @@ html:not([data-theme="dark"]) .admin .input,html:not([data-theme="dark"]) .admin
 @media(max-width:700px){
 .edgeGallery{box-sizing:border-box;width:100%;padding:0 16px 16px;gap:16px}
 }
+
+/* Instagram hashtag source for Hero / About */
+.hashtagSourceField{display:grid;gap:8px;margin:0 0 15px;max-width:640px}
+.hashtagSourceField>label{display:grid;gap:6px;color:var(--muted);font-size:13px}
+.hashtagInputWrap{position:relative;display:block;max-width:320px}
+.hashtagInputWrap>span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.hashtagInputWrap .input{padding-left:26px}
+.hashtagSourceField p{margin:0;font-size:13px;line-height:1.5}
+.hashtagEmpty{margin:-6px 0 15px;font-size:13px}
+.heroPreviewTile.aboutTagTile{flex:0 1 160px;aspect-ratio:4/5}
